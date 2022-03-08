@@ -6,7 +6,7 @@
 All characters are lowercase, split each word with '-'
 
 **Feature - For any feature**  
-feature/#short-description, Ex: feature/search-bar-interface 
+feature/short-description, Ex: feature/search-bar-interface 
 
 **Test : Test branch for anything that don't need to be merged**  
 test/short-task-description, Ex: test/button-on-right
