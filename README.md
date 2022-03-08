@@ -15,7 +15,7 @@ test/short-task-description, Ex: test/button-on-right
 - First word of the commit must be a imperative verb
 - The subject line must start with a capitalized character  
 
-## Merge Request/Review Checklist
+## Pull Request/Review Checklist
 Always rebase with develop before creating the pull request
 
 ### Code
