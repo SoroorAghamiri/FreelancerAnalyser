@@ -1,6 +1,6 @@
 # FreelancerAnalyser
-##Coding standards to follow 
-https://google.github.io/styleguide/javaguide.html
+##Coding standards
+ to follow https://google.github.io/styleguide/javaguide.html
 
 ## Branch Naming
 All characters are lowercase, split each word with '-'
