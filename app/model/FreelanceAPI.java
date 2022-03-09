@@ -1,7 +1,8 @@
 package model;
 
 public enum FreelanceAPI {
-    SEARCH_TERM("https://www.freelancer.com/api/projects/0.1/projects/active/?limit=10&query=");
+    BASE_URL("https://www.freelancer.com"),
+    SEARCH_TERM("/api/projects/0.1/projects/active/?limit=10&query=");
 
     private String url;
 
