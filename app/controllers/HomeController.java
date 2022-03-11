@@ -38,4 +38,14 @@ public class HomeController extends Controller{
         .thenApply(result -> ok(result.asJson()));
     }
 
+    public CompletionStage<Result> getOwnerDetails(String owner_id){
+        return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.OWNER_PROFILE.getUrl() + owner_id + "?profile_description=true")
+        .thenApply(result -> ok(result.asJson()));
+    }
+
+    public CompletionStage<Result> getSkillSearch(String skill_name) {
+        return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
+        .thenApply(result -> ok(result.asJson()));
+    }
+
 }
