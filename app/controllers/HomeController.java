@@ -76,6 +76,18 @@ public class HomeController extends Controller{
         return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
         .thenApply(result -> ok(result.asJson()));
     }
+    
+    public Result getSkillView(String owner_id, String skill_name) {
+    	String test1 = "something";
+    	return ok(views.html.skills.render(skill_name = test1));
+    }
+    
+    public CompletionStage<Result> getSkillSearchTest(String skill_name) {
+    	CompletionStage<Result> t = new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
+        .thenApply(result -> ok(result.asJson()));
+        Skills s = new Skills(t);
+        return ok(views.html.skills.render(skill_name = s.skill_name));
+    }
 
 
     public CompletionStage<Result> getWordStats(String query)
