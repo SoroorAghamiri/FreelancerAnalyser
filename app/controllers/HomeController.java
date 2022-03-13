@@ -51,9 +51,11 @@ public class HomeController extends Controller{
         .thenApply(result -> ok(result.asJson()));
     }
 
-    public Result getWordStats()
+    public CompletionStage<Result> getWordStats(String query)
     {
-        return ok("Word stats");
+        return new FreelancerAPIService(ws, config).
+                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.WORD_STATS.getUrl() + query)
+                .thenApply(result -> ok(result.asJson()));
     }
 
 }

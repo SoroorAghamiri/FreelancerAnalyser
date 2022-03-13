@@ -11,9 +11,6 @@
       <div class="form-group has-search">
         
         <input id="search" type="text" class="form-control" placeholder="Enter search terms">
-        <div id ="stats">
-          <a href ="/stats">Stats</a>
-        </div>
 
       </div>
     </div>
@@ -43,13 +40,26 @@
     $("#result").append('<div class="mt-5"></div>');
     $("#result").append('<label class="fw-bold">Search terms: '+$("#search").val() + "</label>");
     $("#result").append('<p>Flesh Reading Ease Index: </p>');
+
+    //Word stats parsing
+    $("#result").append('<a href =query id="statsLink">Stats</a>');
+
+        (function() {
+        var query = $("#search").val();
+        var strLink = "stats/" + query;
+        document.getElementById("statsLink").setAttribute("href",strLink);
+    })();
+    $("#stats").addClass("enableStats");
+    ///
     
     for(let i=0; i<data['result']['projects'].length; i++){
-      $("#result").append('<li> <a href="/owner-profile/'+data['result']['projects'][i]['owner_id']+'">owner_id</a> '+  data['result']['projects'][i]['title']+' Skills: <a href="/get-skill-search/'+data['result']['projects'][i]['jobs'][0]['name']+'">'+data['result']['projects'][i]['jobs'][0]['name']+'</li>')
+      $("#result").append('<li> <a href="/owner-profile/'+data['result']['projects'][i]['owner_id']+'">owner_id</a> '+
+       data['result']['projects'][i]['title']+' Skills: <a href="/get-skill-search/'+
+       data['result']['projects'][i]['jobs'][0]['name']+'">'+data['result']['projects'][i]['jobs'][0]['name']+'</li>')
     }
 
+
     $("#search").val("");
-    $("#stats").addClass("enableStats");
   });
 
 }); 
