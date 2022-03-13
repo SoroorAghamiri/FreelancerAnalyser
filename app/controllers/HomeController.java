@@ -1,5 +1,6 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import play.mvc.*;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
@@ -53,9 +54,16 @@ public class HomeController extends Controller{
 
     public CompletionStage<Result> getWordStats(String query)
     {
-        return new FreelancerAPIService(ws, config).
-                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.WORD_STATS.getUrl() + query)
-                .thenApply(result -> ok(result.asJson()));
-    }
 
+         CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
+                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.WORD_STATS.getUrl() + query);
+
+         CompletionStage<Result> result = response.thenApply(res ->{
+             JsonNode node = res.asJson();
+             WordStat.processStats(node);
+             return ok(node);
+         });
+
+         return result;
+    }
 }
