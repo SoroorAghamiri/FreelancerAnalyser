@@ -11,6 +11,10 @@
       <div class="form-group has-search">
         
         <input id="search" type="text" class="form-control" placeholder="Enter search terms">
+        <div id ="stats">
+          <a href ="/stats">Stats</a>
+        </div>
+
       </div>
     </div>
     <div class="col-4">
@@ -32,6 +36,8 @@
 }
 
 <script>
+
+  $("#stats").addClass("disableStats");
   $("#go-button").click(function(){
   $.get("/get-search-term/"+$("#search").val(), function(data, status){
     $("#result").append('<div class="mt-5"></div>');
@@ -44,6 +50,17 @@
 
     $("#search").val("");
   });
-  
+    $("#stats").addClass("enableStats");
 }); 
 </script>
+<style>
+  .disableStats {
+    pointer-events: none;
+    opacity: 0.0;
+}
+
+.enableStats {
+    pointer-events: auto;
+    opacity: 1.0;
+}
+</style>
