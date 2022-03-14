@@ -62,7 +62,7 @@ public class HomeController extends Controller{
 
          CompletionStage<Result> result = response.thenApply(res ->{
              JsonNode node = res.asJson();
-             return ok(views.html.stats.render(WordStat.processStats(node)));
+             return ok(views.html.stats.render(WordStat.processStats(node), query));
          });
 
          return result;

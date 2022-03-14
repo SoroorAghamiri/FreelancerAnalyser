@@ -1,4 +1,4 @@
-@(statsMap: Map[String, Integer])
+@(statsMap: Map[String, Integer], query: String)
 
 <html>
 <head>
@@ -7,7 +7,7 @@
 </head>
 <body>
 
-    <h2> Word stats</h2>
+    <h1> Word stats for @query term</h1>
     <table>
         <tr>
             <th>Word</th>
@@ -16,8 +16,8 @@
 
         @for((key, value) <- statsMap) {
         <tr>
-            <td>@key</td>
-            <td>@value</td>
+            <td><div>@key</div></td>
+            <td><div>@value</div></td>
         </tr>
         }
 
@@ -27,9 +27,13 @@
 
 <style>
 table {
-  font-family: arial, sans-serif;
+
+ table-layout: fixed;
+  width: 400px;
+  font: larger monospace;
   border-collapse: collapse;
-  width: 100%;
+    margin-left: auto;
+  margin-right: auto;
 }
 
 td, th {
@@ -40,6 +44,20 @@ td, th {
 
 tr:nth-child(even) {
   background-color: #dddddd;
+}
+
+div {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
+}
+h1 {
+text-align: center;
+font: larger monospace;
 }
 </style>
 

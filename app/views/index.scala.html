@@ -34,7 +34,9 @@
 
 <script>
 
+  var statsId = 0;
   $("#stats").addClass("disableStats");
+
   $("#go-button").click(function(){
   $.get("/get-search-term/"+$("#search").val(), function(data, status){
     $("#result").append('<div class="mt-5"></div>');
@@ -45,10 +47,13 @@
     $("#result").append('<a href =query id="statsLink">Stats</a>');
 
         (function() {
+        var newId = "statsLink" + statsId
+        document.getElementById("statsLink").id = newId;
         var query = $("#search").val();
         var strLink = "stats/" + query;
-        document.getElementById("statsLink").setAttribute("href",strLink);
+        document.getElementById(newId).setAttribute("href",strLink);
     })();
+    statsId++;
     $("#stats").addClass("enableStats");
     ///
     
