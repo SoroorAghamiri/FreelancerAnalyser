@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import play.mvc.*;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
+
+import java.util.List;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
 import model.*;
@@ -60,7 +62,7 @@ public class HomeController extends Controller{
 
          CompletionStage<Result> result = response.thenApply(res ->{
              JsonNode node = res.asJson();
-             WordStat.processStats(node);
+             List<String> stats = WordStat.processStats(node);
              return ok(node);
          });
 
