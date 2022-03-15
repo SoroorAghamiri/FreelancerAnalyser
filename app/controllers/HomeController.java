@@ -5,10 +5,20 @@ import play.mvc.*;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
 import javax.inject.Inject;
 import model.*;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.typesafe.config.Config;
 
 /**
@@ -35,17 +45,18 @@ public class HomeController extends Controller{
     public Result index(){
         return ok(views.html.index.render());
     }
-
+    
     public CompletionStage<Result> getSearchTerm(String query) {
-        return new FreelancerAPIService(ws, config).
-                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + query)
-        .thenApply(result -> ok(result.asJson()));
+        return  new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + query)
+        .thenApply(result -> ok(Readability.processReadability(result)));
+    }
+    
+    public CompletableFuture<Result> readablity(String description) {
+    	return CompletableFuture.completedFuture(ok(description + Readability.processReadabilityForSingleProject(description)));
     }
 
     public CompletionStage<Result> getOwnerDetails(String owner_id){
-        return new FreelancerAPIService(ws, config).
-                getAPIResult(FreelanceAPI.BASE_URL.getUrl() +
-                        FreelanceAPI.OWNER_PROFILE.getUrl() + owner_id + "?profile_description=true")
+        return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.OWNER_PROFILE.getUrl() + owner_id)
         .thenApply(result -> ok(result.asJson()));
     }
 
@@ -53,6 +64,7 @@ public class HomeController extends Controller{
         return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
         .thenApply(result -> ok(result.asJson()));
     }
+
 
     public CompletionStage<Result> getWordStats(String query)
     {
