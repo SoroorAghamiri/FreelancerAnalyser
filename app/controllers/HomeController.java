@@ -56,15 +56,29 @@ public class HomeController extends Controller{
 
     public CompletionStage<Result> getWordStats(String query)
     {
-
          CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
                 getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.WORD_STATS.getUrl() + query);
 
          CompletionStage<Result> result = response.thenApply(res ->{
              JsonNode node = res.asJson();
-             return ok(views.html.stats.render(WordStat.processStats(node), query));
+             return ok(views.html.stats.render(WordStat.processAllProjectsStats(node),
+                     "Word stats for latest 250 projects for "+query+" term"));
          });
 
          return result;
+    }
+
+    public CompletionStage<Result> getSingleProjectStats(Integer id)
+    {
+        CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
+                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.PROJECT_BY_ID.getUrl() + id);
+
+        CompletionStage<Result> result = response.thenApply(res ->{
+            JsonNode node = res.asJson();
+            return ok(views.html.stats.render(WordStat.processProjectStats(node),
+                    "Single project "+id.toString()+" Stats"));
+        });
+
+        return result;
     }
 }

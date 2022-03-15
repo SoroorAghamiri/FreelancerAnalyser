@@ -44,7 +44,7 @@
     $("#result").append('<p>Flesh Reading Ease Index: </p>');
 
     //Word stats parsing
-    $("#result").append('<a href =query id="statsLink">Stats</a>');
+    $("#result").append('<a href =query id="statsLink">Global Stats</a>');
 
         (function() {
         var newId = "statsLink" + statsId
@@ -56,11 +56,16 @@
     statsId++;
     $("#stats").addClass("enableStats");
     ///
-    
+
     for(let i=0; i<data['result']['projects'].length; i++){
-      $("#result").append('<li> <a href="/owner-profile/'+data['result']['projects'][i]['owner_id']+'">owner_id</a> '+
-       data['result']['projects'][i]['title']+' Skills: <a href="/get-skill-search/'+
-       data['result']['projects'][i]['jobs'][0]['name']+'">'+data['result']['projects'][i]['jobs'][0]['name']+'</li>')
+
+      var projectTitle = data['result']['projects'][i]['title'];
+      var skill =  data['result']['projects'][i]['jobs'][0]['name'];
+      var ownerProfileId = data['result']['projects'][i]['owner_id'];
+      var projectId = data['result']['projects'][i]['id'];
+
+      $("#result").append('<li> <a href="/owner-profile/'+ownerProfileId+'">owner_id</a> '+
+       projectTitle+' Skills: <a href="/get-skill-search/'+skill+'">'+skill+'.</a> <a href ="/stats/single/'+projectId+'">Stats.</a></li>')
     }
 
 

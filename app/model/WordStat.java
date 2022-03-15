@@ -31,14 +31,25 @@ public class WordStat {
         uniqueWords = new ArrayList<>();
     }
 
-    public static Map<String, Integer> processStats(JsonNode jsonNode) {
+    public static Map<String, Integer> processAllProjectsStats(JsonNode jsonNode) {
 
-        AllProjects projects = Utils.convertNodeToPOJO(jsonNode);
+        AllProjects projects = Utils.convertNodeToAllProjects(jsonNode);
         List<String> combinedStream = Stream.of(projects.getTitles(), projects.getDescriptions())
                 .flatMap(Collection::stream).collect(toList());
+        return processWords(combinedStream);
+    }
 
+    public static Map<String, Integer> processProjectStats(JsonNode jsonNode) {
+
+        Project project = Utils.convertNodeToProject(jsonNode);
+        List<String> combinedStream = Stream.of(project.getTitle(), project.getDescription()).collect(toList());
+        return processWords(combinedStream);
+    }
+
+    private static  Map<String, Integer> processWords(List<String> combinedStream)
+    {
         List<String> separatedWords = combinedStream.stream().map(w -> w
-                .replaceAll("[^A-Za-z0-9 ]", "").split(" "))
+                        .replaceAll("[^A-Za-z0-9 ]", "").split(" "))
                 .flatMap(Arrays::stream)
                 .collect(Collectors.toList());
 
@@ -48,7 +59,6 @@ public class WordStat {
                 .entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                 .collect(Collectors.toMap(e->e.getKey(), v -> v.getValue(), (e1, e2) -> e1, LinkedHashMap::new));
 
-
-            return uniqueWordsFrequency;
+        return uniqueWordsFrequency;
     }
 }

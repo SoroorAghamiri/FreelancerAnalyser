@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import model.AllProjects;
 import model.Project;
+import scala.util.parsing.json.JSONObject;
 
 import java.util.List;
 import java.util.function.Function;
@@ -22,7 +23,7 @@ public class Utils {
      * @param jsonNode JsonNode objects returned from the result
      * @return List of Serialized projects
      */
-    public static AllProjects convertNodeToPOJO(JsonNode jsonNode)
+    public static AllProjects convertNodeToAllProjects(JsonNode jsonNode)
     {
         AllProjects allProjects = null;
 
@@ -40,5 +41,32 @@ public class Utils {
         }
 
         return allProjects;
+    }
+
+    /**
+     * Function to convert Project json node to Plain Old Java Object
+     * @param jsonNode required JsonNode
+     * @return returns POJO of new object created from JSON file
+     */
+    public static Project convertNodeToProject(JsonNode jsonNode)
+    {
+        Project projectPOJO = null;
+
+        try {
+            String jsonString = jsonNode.toPrettyString();
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            JsonNode node = objectMapper.readTree(jsonString);
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            String title = node.path("result").get("title").asText();
+            String description = node.path("result").get("preview_description").asText();
+
+            projectPOJO = new Project(title, description);
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return projectPOJO;
     }
 }
