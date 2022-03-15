@@ -1,14 +1,25 @@
  @(records: List[String])
 
-<html>
-  <head>
-    <title>Related Projects</title>
-  </head>
-  <body>
-  <script>
-    @for((r) <- records.zipWithIndex){
-       @r
-    }
-  </script>
-  </body>
-</html>
+ <html>
+ <head>
+   <title>Test</title>
+
+ </head>
+ <body>
+ @for((key) <- records) {
+ <li><div>@key</div></li>
+
+ }
+ <div class="row">
+   <div class="col-4"></div>
+   <div class="col-4" id="result">
+
+   </div>
+   <div class="col-4"></div>
+
+ </div>
+ </body>
+ </html>
+
+
+

@@ -54,5 +54,9 @@ public class HomeController extends Controller{
         
         return result;
     }
+    public CompletionStage<Result> getSkillJson(String skill_name){
+        return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
+                .thenApply(result -> ok(result.asJson()));
+    }
 
 }
