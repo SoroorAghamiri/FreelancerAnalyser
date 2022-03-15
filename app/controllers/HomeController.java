@@ -52,7 +52,7 @@ public class HomeController extends Controller{
     }
     
     public CompletableFuture<Result> readablity(String description) {
-    	return CompletableFuture.completedFuture(ok(description + Readability.processReadabilityForSingleProject(description)));
+    	return CompletableFuture.completedFuture(ok("Preview Description: " + description + "\n" + Readability.processReadabilityForSingleProject(description)));
     }
 
     public CompletionStage<Result> getOwnerDetails(String owner_id){

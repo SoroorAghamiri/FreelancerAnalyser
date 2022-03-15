@@ -25,42 +25,30 @@ public class Readability {
 		JsonNode jsonNode = ws.asJson();
     	JsonNode projectJsonNode = ws.asJson().get("result").get("projects");
     	
+    	AllProjects projects = Utils.convertNodeToAllProjects(jsonNode);
+        List<String> combinedStream = Stream.of(projects.getDescriptions())
+                .flatMap(Collection::stream).collect(toList());
+    	
     	float FREI = 0;
     	float FKGL = 0;
     	
-    	for(JsonNode item : projectJsonNode) {
-    		String description = item.get("preview_description").asText();
+    	for(String description : combinedStream) {
     		int numberOfSentence = findNumberOfSentence(description);
             int numberOfWord = description.split(" ").length;
             int numberOfSyllable = countSyllables(description);
             
             FREI += calculateFleschReadabilityIndex(numberOfSentence, numberOfWord, numberOfSyllable);
             FKGL += calculateFKGL(numberOfSentence, numberOfWord, numberOfSyllable);
-            
-    	};
+    	}
     	
-    	float avgFREI = FREI/projectJsonNode.size();
-    	float avgFKGL = FKGL/projectJsonNode.size();
-    	
-//    	Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
-//        
-//    	while(fields.hasNext()) {
-//    	    Map.Entry<String, JsonNode> field = fields.next();
-//    	    String   fieldName  = field.getKey();
-//    	    JsonNode fieldValue = field.getValue();
-//
-//    	    System.out.println(fieldName + " = " + fieldValue.asText());
-//    	}
-//    	
+    	float avgFREI = FREI/combinedStream.size();
+    	float avgFKGL = FKGL/combinedStream.size();
+
     	ObjectMapper objectMapper = new ObjectMapper();
     	ObjectNode parentNode = ((ObjectNode) jsonNode).putObject("score");
     	
     	parentNode.put("avgFREI", avgFREI);
     	parentNode.put("avgFKGL", avgFKGL);
-    	
-    	
-        
-    	//((ObjectNode) jsonNode).remove("request_id");
     	
     	return jsonNode;
 	}
@@ -70,12 +58,38 @@ public class Readability {
         int numberOfWord = description.split(" ").length;
         int numberOfSyllable = countSyllables(description);
         
-        return "\n Index: " + calculateFleschReadabilityIndex(numberOfSentence, numberOfWord, numberOfSyllable) + "\nFKGL: " + calculateFKGL(numberOfSentence, numberOfWord, numberOfSyllable); 
+        float FRI = calculateFleschReadabilityIndex(numberOfSentence, numberOfWord, numberOfSyllable);
+        float FKGL = calculateFKGL(numberOfSentence, numberOfWord, numberOfSyllable);
+        String FRIEducationLevel = "";
+        
+        if(FRI > 100) {
+        	FRIEducationLevel = "Early";
+        }else if(FRI > 91) {
+        	FRIEducationLevel = "5th grade";
+        }else if(FRI > 81) {
+        	FRIEducationLevel = "6th grade";
+        }else if(FRI > 71) {
+        	FRIEducationLevel = "7th grade";
+        }else if(FRI > 66) {
+        	FRIEducationLevel = "8th grade";
+        }else if(FRI > 61) {
+        	FRIEducationLevel = "9th grade";
+        }else if(FRI > 51) {
+        	FRIEducationLevel = "High School";
+        }else if(FRI > 31) {
+        	FRIEducationLevel = "Some College";
+        }else if(FRI > 0) {
+        	FRIEducationLevel = "College Graduate";
+        }else if(FRI <= 0) {
+        	FRIEducationLevel = "Law School Graduate";
+        }
+        
+        return "\nIndex: " + FRI + "\nEducation Level: " + FRIEducationLevel + "\nFKGL: " + FKGL; 
 	}
 	
 	private static int countSyllables(String s) {
         int counter = 0;
-        s = s.toLowerCase(); // converting all string to lowercase
+        s = s.toLowerCase();
         if(s.contains("the ")){
             counter++;
         }
