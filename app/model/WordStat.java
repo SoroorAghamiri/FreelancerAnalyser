@@ -1,5 +1,6 @@
 package model;
 
+import Helpers.Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -32,7 +33,7 @@ public class WordStat {
 
     public static Map<String, Integer> processStats(JsonNode jsonNode) {
 
-        AllProjects projects = convertNodeToPOJO(jsonNode);
+        AllProjects projects = Utils.convertNodeToPOJO(jsonNode);
         List<String> combinedStream = Stream.of(projects.getTitles(), projects.getDescriptions())
                 .flatMap(Collection::stream).collect(toList());
 
@@ -50,30 +51,4 @@ public class WordStat {
 
             return uniqueWordsFrequency;
     }
-
-    /**
-     * Converts jsonNode to Plain Old Java Object
-     * @param jsonNode JsonNode objects returned from the result
-     * @return List of Serialized projects
-     */
-    public static AllProjects convertNodeToPOJO(JsonNode jsonNode)
-    {
-        AllProjects allProjects = null;
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jsonString = jsonNode.toPrettyString();
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            ArrayNode arrayNode = (ArrayNode) objectMapper.readTree(jsonString).get("result").get("projects");
-            List<Project> projects = objectMapper.readValue(arrayNode.toString(), new TypeReference<List<Project>>() {});
-            allProjects = new AllProjects(projects);
-
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-
-        }
-
-        return allProjects;
-    }
-
 }
