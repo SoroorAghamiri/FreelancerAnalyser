@@ -1,5 +1,6 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import play.mvc.*;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
@@ -7,7 +8,6 @@ import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
 import model.*;
 import com.typesafe.config.Config;
-import java.lang.*;
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -44,21 +44,15 @@ public class HomeController extends Controller{
         .thenApply(result -> ok(result.asJson()));
     }
 
+    
     public CompletionStage<Result> getSkillSearch(String skill_name) {
-        return ok(views.html.skills.render(new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
-        .thenApply(result -> ok(result.asJson()))).as(new Skills().skill_name));
-    }
-    
-    public Result getSkillView(String owner_id, String skill_name) {
-    	String test1 = "something";
-    	return ok(views.html.skills.render(skill_name = test1));
-    }
-    
-    public CompletionStage<Result> getSkillSearchTest(String skill_name) {
-    	CompletionStage<Result> t = new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
-        .thenApply(result -> ok(result.asJson()));
-        Skills s = new Skills(t);
-        return ok(views.html.skills.render(skill_name = s.skill_name));
+    	CompletionStage<Result> result = new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
+        .thenApply(success ->{
+            JsonNode received = success.asJson();
+            return ok(views.html.skills.render(new Skills().parseToSkills(received)));
+        });
+        
+        return result;
     }
 
 }

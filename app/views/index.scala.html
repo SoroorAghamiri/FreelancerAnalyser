@@ -40,7 +40,7 @@
     $("#result").append('<p>Flesh Reading Ease Index: </p>');
     
     for(let i=0; i<data['result']['projects'].length; i++){
-      $("#result").append('<li> <a href="/owner-profile/'+data['result']['projects'][i]['owner_id']+'">owner_id</a> '+  data['result']['projects'][i]['title']+' Skills: <a href="/get-skill-search/'+data['result']['projects'][i]['jobs'][0]['name']+'">'+data['result']['projects'][i]['jobs'][0]['name']+'</li>')
+      $("#result").append('<li> <a href="/owner-profile/'+data['result']['projects'][i]['owner_id']+'">owner_id</a> '+  data['result']['projects'][i]['title']+' Skills: <a href="/skills/'+data['result']['projects'][i]['jobs'][0]['name']+'">'+data['result']['projects'][i]['jobs'][0]['name']+'</li>')
     }
 
     $("#search").val("");

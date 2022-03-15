@@ -1,47 +1,49 @@
 package model;
-<<<<<<< Updated upstream
-
-import java.util.concurrent.CompletionStage.*;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import scala.util.parsing.json.JSONArray;
+import scala.util.parsing.json.JSONArray$;
 
-public class Skills {
-//	CompletionStage<Result> received_projects;
-	public static String skill_name;
-	public Skills(CompletionStage<Result> skills) {
-//		this.received_projects = skills;
-		Object obj = new JSONParser().parse(skills);
-        
-        // typecasting obj to JSONObject
-        JSONObject jo = (JSONObject) obj;
-          
-        // getting firstName and lastName
-        this.skill_name = (String) jo.get("job_details");
-//        String lastName = (String) jo.get("lastName");
-	}
-	
-=======
-//import org.json.simple.*;
-import play.api.libs.json.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Skills {
 	/**
 	 * This object holds the details that must be shown for a selected skill.
 	 * @author Soroor
 	 */
-//	public String owner_id;
-//	public Date date;
-	public String skill_name;
-	public Skills(String skillName) {
-		this.skill_name = skillName;
-	}
+
 	public Skills() {
 		
 	}
 	
 	public static String received_skills;
-	public String parseToSkills(Json receivedData){
-		this.received_skills = Json.stringify(receivedData);//JsonNode.get("job_details").textValue();
+	public List<String> parseToSkills(JsonNode receivedData){
+		JsonNode result = receivedData.get("result");
+		String allprojects = result.toPrettyString();
+
+			ArrayNode projectarray = null;
+			try {
+				projectarray = (ArrayNode) new ObjectMapper().readTree(allprojects).get("projects");
+				List<Projects_For_A_Skill> foundprojects = new ObjectMapper().readValue(projectarray.toString(), new TypeReference<List<Projects_For_A_Skill>>() {
+				});
+				List<String> foundprojectstring = foundprojects.stream().map(p->p.owner_id+" "+p.title+" "+p.type+" "+p.related_skills).collect(Collectors.toList());
+				return foundprojectstring;
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+
+
+		return  null;
 	}
->>>>>>> Stashed changes
+
+
 }
