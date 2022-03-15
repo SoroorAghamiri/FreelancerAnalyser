@@ -44,6 +44,12 @@ public class HomeController extends Controller{
         .thenApply(result -> ok(result.asJson()));
     }
 
+    /**
+     * @author Soroor
+     * Gets the 10 latest projects related to a skill
+     * @param skill_name the skill selected in the main page
+     * @return skill view, displaying 10 latest projects
+     */
     
     public CompletionStage<Result> getSkillSearch(String skill_name) {
     	CompletionStage<Result> result = new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
@@ -53,10 +59,6 @@ public class HomeController extends Controller{
         });
         
         return result;
-    }
-    public CompletionStage<Result> getSkillJson(String skill_name){
-        return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
-                .thenApply(result -> ok(result.asJson()));
     }
 
 }

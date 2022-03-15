@@ -13,17 +13,32 @@ import scala.util.parsing.json.JSONArray$;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * <code>
+ *     Skills
+ * </code>
+ * gets the Json file from the controller, parses the file, returns each project as a string.
+ * The result is displayed in skills view.
+ * @author Soroor
+ */
+
 public class Skills {
-	/**
-	 * This object holds the details that must be shown for a selected skill.
-	 * @author Soroor
-	 */
+
 
 	public Skills() {
 		
 	}
-	
-	public static String received_skills;
+
+	/**
+	 * The <code>
+	 *     parseToSkills
+	 * </code>
+	 * method parses the json file and stores the result in a list of <code> Projects For A Skill</code> obejct.
+	 * Then using streams, a list of string is created that each of its elements, hold a concatenation of all the attributes in a
+	 * <code> Projects For A Skill</code> object.
+	 * @param receivedData
+	 * @return
+	 */
 	public List<String> parseToSkills(JsonNode receivedData){
 		String result = receivedData.toPrettyString();
 		try {
@@ -44,15 +59,9 @@ public class Skills {
 						projectarray.get(i).get("title").textValue(), projectarray.get(i).get("type").textValue(), jobs);
 				allproject.add(newproject);
 			}
-			List<String> testprojects = new ArrayList<>();
-			for(int i =0; i < allproject.size();i++){
-				String newconcated = allproject.get(i).getOwnerId().concat(allproject.get(i).getTitle());
-				newconcated = newconcated.concat(allproject.get(i).getType());
-				newconcated = newconcated.concat(allproject.get(i).getAllJobs());
-				testprojects.add(newconcated);
-			}
-//			List<String> foundprojectstring = allproject.stream().map(p->p.getOwnerId()+p.getTitle()+p.getType()+p.getAllJobs()).collect(Collectors.toList());
-			return testprojects;
+
+			List<String> foundprojectstring = allproject.stream().map(p->p.getOwnerId().concat(p.getTitle().concat(p.getType().concat(p.getAllJobs())))).collect(Collectors.toList());
+			return foundprojectstring;
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
