@@ -11,6 +11,7 @@
       <div class="form-group has-search">
         
         <input id="search" type="text" class="form-control" placeholder="Enter search terms">
+
       </div>
     </div>
     <div class="col-4">
@@ -32,18 +33,55 @@
 }
 
 <script>
+
+  var statsId = 0;
+  $("#stats").addClass("disableStats");
+
   $("#go-button").click(function(){
   $.get("/get-search-term/"+$("#search").val(), function(data, status){
     $("#result").append('<div class="mt-5"></div>');
     $("#result").append('<label class="fw-bold">Search terms: '+$("#search").val() + "</label>");
     $("#result").append('<p>Flesh Reading Ease Index: </p>');
-    
+
+    //Word stats parsing
+    $("#result").append('<a href =query id="statsLink">Global Stats</a>');
+
+        (function() {
+        var newId = "statsLink" + statsId
+        document.getElementById("statsLink").id = newId;
+        var query = $("#search").val();
+        var strLink = "stats/" + query;
+        document.getElementById(newId).setAttribute("href",strLink);
+    })();
+    statsId++;
+    $("#stats").addClass("enableStats");
+    ///
+
     for(let i=0; i<data['result']['projects'].length; i++){
-      $("#result").append('<li> <a href="/owner-profile/'+data['result']['projects'][i]['owner_id']+'">owner_id</a> '+  data['result']['projects'][i]['title']+' Skills: <a href="/get-skill-search/'+data['result']['projects'][i]['jobs'][0]['name']+'">'+data['result']['projects'][i]['jobs'][0]['name']+'</li>')
+
+      var projectTitle = data['result']['projects'][i]['title'];
+      var skill =  data['result']['projects'][i]['jobs'][0]['name'];
+      var ownerProfileId = data['result']['projects'][i]['owner_id'];
+      var projectId = data['result']['projects'][i]['id'];
+
+      $("#result").append('<li> <a href="/owner-profile/'+ownerProfileId+'">owner_id</a> '+
+       projectTitle+' Skills: <a href="/get-skill-search/'+skill+'">'+skill+'.</a> <a href ="/stats/single/'+projectId+'">Stats.</a></li>')
     }
+
 
     $("#search").val("");
   });
-  
+
 }); 
 </script>
+<style>
+  .disableStats {
+    pointer-events: none;
+    opacity: 0.0;
+}
+
+.enableStats {
+    pointer-events: auto;
+    opacity: 1.0;
+}
+</style>
