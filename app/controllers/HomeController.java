@@ -45,7 +45,6 @@ public class HomeController extends Controller{
     }
 
     /**
-     * @author Soroor
      * Gets the 10 latest projects related to a skill
      * @param skill_name the skill selected in the main page
      * @return skill view, displaying 10 latest projects
