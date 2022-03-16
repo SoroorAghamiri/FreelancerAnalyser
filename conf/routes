@@ -5,7 +5,7 @@
 # HomeController
 GET     /                           controllers.HomeController.index()
 GET     /get-search-term/:query     controllers.HomeController.getSearchTerm(query: String)
-GET     /owner-profile/:owner_id    controllers.HomeController.getOwnerDetails(owner_id: String)
+GET     /owner-details/:owner_id    controllers.HomeController.getOwnerDetails(owner_id: String)
 GET     /skills/:skill_name   controllers.HomeController.getSkillSearch(skill_name: String)
 GET     /stats/:query               controllers.HomeController.getWordStats(query: String)
 GET     /stats/single/:project_id   controllers.HomeController.getSingleProjectStats(project_id: Integer)
