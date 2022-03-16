@@ -1,47 +1,74 @@
 package model;
-<<<<<<< Updated upstream
-
-import java.util.concurrent.CompletionStage.*;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import scala.util.parsing.json.JSONArray;
+import scala.util.parsing.json.JSONArray$;
 
-public class Skills {
-//	CompletionStage<Result> received_projects;
-	public static String skill_name;
-	public Skills(CompletionStage<Result> skills) {
-//		this.received_projects = skills;
-		Object obj = new JSONParser().parse(skills);
-        
-        // typecasting obj to JSONObject
-        JSONObject jo = (JSONObject) obj;
-          
-        // getting firstName and lastName
-        this.skill_name = (String) jo.get("job_details");
-//        String lastName = (String) jo.get("lastName");
-	}
-	
-=======
-//import org.json.simple.*;
-import play.api.libs.json.*;
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * <code>
+ *     Skills
+ * </code>
+ * gets the Json file from the controller, parses the file, returns each project as a string.
+ * The result is displayed in skills view.
+ * @author Soroor
+ */
 
 public class Skills {
-	/**
-	 * This object holds the details that must be shown for a selected skill.
-	 * @author Soroor
-	 */
-//	public String owner_id;
-//	public Date date;
-	public String skill_name;
-	public Skills(String skillName) {
-		this.skill_name = skillName;
-	}
+
+
 	public Skills() {
-		
+
 	}
-	
-	public static String received_skills;
-	public String parseToSkills(Json receivedData){
-		this.received_skills = Json.stringify(receivedData);//JsonNode.get("job_details").textValue();
+
+	/**
+	 * The <code>
+	 *     parseToSkills
+	 * </code>
+	 * method parses the json file and stores the result in a list of <code> Projects For A Skill</code> obejct.
+	 * Then using streams, a list of string is created that each of its elements, hold a concatenation of all the attributes in a
+	 * <code> Projects For A Skill</code> object.
+	 * @param receivedData
+	 * @return
+	 */
+	public List<String> parseToSkills(JsonNode receivedData){
+		String result = receivedData.toPrettyString();
+		try {
+			ObjectMapper objectmapper = new ObjectMapper();
+			objectmapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			ArrayNode projectarray = null;
+			projectarray = (ArrayNode) new ObjectMapper().readTree(result).get("result").get("projects");
+			List<Projects_For_A_Skill> allproject = new ArrayList<>();
+			for(int i =0; i < projectarray.size();i++){
+				String projectasstring = projectarray.get(i).toPrettyString();
+				ArrayNode relatedjobs = (ArrayNode) new ObjectMapper().readTree(projectasstring).get("jobs");
+				List<Jobs_For_Project> jobs = new ArrayList<>();
+				for(int j = 0; j < relatedjobs.size();j++){
+					Jobs_For_Project newjob = new Jobs_For_Project(relatedjobs.get(j).get("name").textValue());
+					jobs.add(newjob);
+				}
+				Projects_For_A_Skill newproject = new Projects_For_A_Skill(projectarray.get(i).get("owner_id").textValue() ,
+						projectarray.get(i).get("title").textValue(), projectarray.get(i).get("type").textValue(), jobs);
+				allproject.add(newproject);
+			}
+
+			List<String> foundprojectstring = allproject.stream().map(p->p.getOwnerId().concat(p.getTitle().concat(p.getType().concat(p.getAllJobs())))).collect(Collectors.toList());
+			return foundprojectstring;
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return  null;
+
 	}
->>>>>>> Stashed changes
+
+
+
 }

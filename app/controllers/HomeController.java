@@ -73,21 +73,20 @@ public class HomeController extends Controller{
         .thenApply(result -> ok(result.asJson()));
     }
 
+    /**
+     * Gets the 10 latest projects related to a skill
+     * @param skill_name the skill selected in the main page
+     * @return skill view, displaying 10 latest projects
+     */
+
     public CompletionStage<Result> getSkillSearch(String skill_name) {
-        return ok(views.html.skills.render(new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
-        .thenApply(result -> ok(result.asJson()))).as(new Skills().skill_name));
-    }
-    
-    public Result getSkillView(String owner_id, String skill_name) {
-    	String test1 = "something";
-    	return ok(views.html.skills.render(skill_name = test1));
-    }
-    
-    public CompletionStage<Result> getSkillSearchTest(String skill_name) {
-    	CompletionStage<Result> t = new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
-        .thenApply(result -> ok(result.asJson()));
-        Skills s = new Skills(t);
-        return ok(views.html.skills.render(skill_name = s.skill_name));
+        CompletionStage<Result> result = new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
+                .thenApply(success ->{
+                    JsonNode received = success.asJson();
+                    return ok(views.html.skills.render(new Skills().parseToSkills(received)));
+                });
+
+        return result;
     }
 
 
