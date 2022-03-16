@@ -1,8 +1,11 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import play.mvc.*;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
+
+import java.util.List;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
 import model.*;
@@ -34,12 +37,15 @@ public class HomeController extends Controller{
     }
 
     public CompletionStage<Result> getSearchTerm(String query) {
-        return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + query)
+        return new FreelancerAPIService(ws, config).
+                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + query)
         .thenApply(result -> ok(result.asJson()));
     }
 
     public CompletionStage<Result> getOwnerDetails(String owner_id){
-        return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.OWNER_PROFILE.getUrl() + owner_id + "?profile_description=true")
+        return new FreelancerAPIService(ws, config).
+                getAPIResult(FreelanceAPI.BASE_URL.getUrl() +
+                        FreelanceAPI.OWNER_PROFILE.getUrl() + owner_id + "?profile_description=true")
         .thenApply(result -> ok(result.asJson()));
     }
 
@@ -48,4 +54,31 @@ public class HomeController extends Controller{
         .thenApply(result -> ok(result.asJson()));
     }
 
+    public CompletionStage<Result> getWordStats(String query)
+    {
+         CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
+                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.WORD_STATS.getUrl() + query);
+
+         CompletionStage<Result> result = response.thenApply(res ->{
+             JsonNode node = res.asJson();
+             return ok(views.html.stats.render(WordStat.processAllProjectsStats(node),
+                     "Word stats for latest 250 projects for "+query+" term"));
+         });
+
+         return result;
+    }
+
+    public CompletionStage<Result> getSingleProjectStats(Integer id)
+    {
+        CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
+                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.PROJECT_BY_ID.getUrl() + id);
+
+        CompletionStage<Result> result = response.thenApply(res ->{
+            JsonNode node = res.asJson();
+            return ok(views.html.stats.render(WordStat.processProjectStats(node),
+                    "Single project "+id.toString()+" Stats"));
+        });
+
+        return result;
+    }
 }
