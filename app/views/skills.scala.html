@@ -1,18 +1,23 @@
-<<<<<<< Updated upstream
-@(skill_name: String)
-=======
- @(skill_name: String)
->>>>>>> Stashed changes
-@main("Welcome to Play") {
+@(records: List[String])
 
-<!DOCTYPE html>
 <html>
-  <head>
-    <title>Latest Project For @skill_name</title>
-  </head>
-  <body>
- 	<p>@skill_name</p>
-    <section class="content"></section>
-  </body>
-</html>
+<head>
+  <title>Skills</title>
+
+</head>
+<body>
+@for((key) <- records) {
+<li><div>@key</div></li>
+
 }
+<div class="row">
+  <div class="col-4"></div>
+  <div class="col-4" id="result">
+
+  </div>
+  <div class="col-4"></div>
+
+</div>
+</body>
+</html>
+
