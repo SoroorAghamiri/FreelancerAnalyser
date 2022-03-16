@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
  * The result is displayed in skills view.
  * @author Soroor
  */
-
 public class Skills {
 
 

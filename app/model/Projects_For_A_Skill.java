@@ -11,7 +11,6 @@ import java.util.List;
  * contains the details that must be shown for related projects to a skill.
  * @author Soroor
  */
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Projects_For_A_Skill {
     public String owner_id;
