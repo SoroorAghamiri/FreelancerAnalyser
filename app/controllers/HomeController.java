@@ -11,6 +11,7 @@ import com.typesafe.config.Config;
 /**
  * This controller contains an action to handle HTTP requests
  * to the application's home page.
+ * @author
  */
 public class HomeController extends Controller{
 
@@ -38,14 +39,29 @@ public class HomeController extends Controller{
         .thenApply(result -> ok(result.asJson()));
     }
 
+    /**
+     *
+     *
+     * this return the owner details by the owner_id
+     * @return
+     */
     public CompletionStage<Result> getOwnerDetails(String owner_id){
-        return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.OWNER_PROFILE.getUrl() + owner_id + "?profile_description=true")
+        return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.OWNER_PROFILE.getUrl() + owner_id)
         .thenApply(result -> ok(result.asJson()));
     }
 
     public CompletionStage<Result> getSkillSearch(String skill_name) {
         return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
         .thenApply(result -> ok(result.asJson()));
+    }
+
+    /**
+     *
+     * render ownerView Page and load the data return from the api
+     *
+     */
+    public Result getOwnerView(String owner_id){
+        return ok(views.html.ownerProfile.render());
     }
 
 }

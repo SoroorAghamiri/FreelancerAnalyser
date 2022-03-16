@@ -1,37 +1,41 @@
 @()
 
 @main("Welcome to Play") {
-  <div class="text-center mt-3">
-    <h3>Welcome to Freelancer Analyser!</h3>
-  </div>
-  
-  <div class="row mt-5">
-    <div class="col-4"></div>
-    <div class="col-4">
-      <div class="form-group has-search">
-        
-        <input id="search" type="text" class="form-control" placeholder="Enter search terms">
+  <div >
+    <div class="text-center mt-3">
+      <h3>Welcome to Freelancer Analyser!</h3>
+    </div>
+    
+    <div class="row mt-5">
+      <div class="col-4"></div>
+      <div class="col-4">
+        <div class="form-group has-search">
+          
+          <input id="search" type="text" class="form-control" placeholder="Enter search terms">
+        </div>
+      </div>
+      <div class="col-4">
+        <button id="go-button" class="btn btn-primary">
+          <span class="fa fa-search form-control-feedback"></span>
+          Go
+        </button>
       </div>
     </div>
-    <div class="col-4">
-      <button id="go-button" class="btn btn-primary">
-        <span class="fa fa-search form-control-feedback"></span>
-        Go
-      </button>
-    </div>
-  </div>
 
-  <div class="row">
-    <div class="col-4"></div>
-    <div class="col-4" id="result">
+    <div class="row">
+      <div class="col-4"></div>
+      <div class="col-4" id="result">
+        
+      </div>
+      <div class="col-4"></div>
       
     </div>
-    <div class="col-4"></div>
-    
   </div>
+ 
 }
 
 <script>
+  $('#secondaryPage').css({'display':'none'});
   $("#go-button").click(function(){
   $.get("/get-search-term/"+$("#search").val(), function(data, status){
     $("#result").append('<div class="mt-5"></div>');
@@ -39,11 +43,21 @@
     $("#result").append('<p>Flesh Reading Ease Index: </p>');
     
     for(let i=0; i<data['result']['projects'].length; i++){
-      $("#result").append('<li> <a href="/owner-profile/'+data['result']['projects'][i]['owner_id']+'">owner_id</a> '+  data['result']['projects'][i]['title']+' Skills: <a href="/get-skill-search/'+data['result']['projects'][i]['jobs'][0]['name']+'">'+data['result']['projects'][i]['jobs'][0]['name']+'</li>')
+    var userID=data['result']['projects'][i]['owner_id'];
+    console.log(userID);
+      $("#result").append('<li> <a href="/owner-profile/'+data['result']['projects'][i]['owner_id']+'">'+userID+'</a> '+  data['result']['projects'][i]['title']+' Skills: <a href="/get-skill-search/'+data['result']['projects'][i]['jobs'][0]['name']+'">'+data['result']['projects'][i]['jobs'][0]['name']+'</li>')
+     // $("#result").append('<li> <a href="/ownerDetails" onClick="buttonCLick()" id="ownerId">owner_id</a> '+  data['result']['projects'][i]['title']+' Skills: <a href="/get-skill-search/'+data['result']['projects'][i]['jobs'][0]['name']+'">'+data['result']['projects'][i]['jobs'][0]['name']+'</li>')
     }
 
     $("#search").val("");
   });
   
 }); 
+
+function buttonCLick(){
+ 
+ // alert("cjdsvhbdshvdbsvhdsbvhsd");
+  // $('.mainDIv').css({'display':'none'});
+  // $('#condaryPage').css({'display':'block'});
+}
 </script>
