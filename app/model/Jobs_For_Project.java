@@ -1,5 +1,7 @@
 package model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * <code>
  *     Jobs For Project
@@ -7,6 +9,7 @@ package model;
  * holds the name of the skills related to each project.
  * @author Soroor
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Jobs_For_Project {
     public String name;
     public Jobs_For_Project(String name){
