@@ -28,7 +28,7 @@ public class SkillsTest {
      */
     @Test
     public void parseToSkillsTest() throws JsonParseException, IOException {
-        String jsonString ="{\"result\":{\"projects\":[{\"owner_id\":\"4444\",\"title\":\"Tom\",\"type\":\"Cruise\",\"jobs\":[{\"name\":\"PHP\",\"igonre\":true},{\"name\":\"JAVA\",\"igonre\":false}]},{\"owner_id\":\"5555\",\"title\":\"Toma\",\"type\":\"Cruisea\",\"jobs\":[{\"name\":\"PHPa\",\"igonre\":true}]},{\"owner_id\":\"6666\",\"title\":\"Tomf\",\"type\":\"Cruisef\",\"jobs\":[]}]}}";
+        String jsonString ="{\"result\":{\"projects\":[{\"owner_id\":4444,\"title\":\"Tom\",\"type\":\"Cruise\",\"jobs\":[{\"name\":\"PHP\",\"igonre\":true},{\"name\":\"JAVA\",\"igonre\":false}]},{\"owner_id\":5555,\"title\":\"Toma\",\"type\":\"Cruisea\",\"jobs\":[{\"name\":\"PHPa\",\"igonre\":true}]},{\"owner_id\":6666,\"title\":\"Tomf\",\"type\":\"Cruisef\",\"jobs\":[]}]}}";
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.readTree(jsonString);
         Skills testskill = new Skills();
@@ -39,7 +39,7 @@ public class SkillsTest {
         Assert.assertTrue(compareStringLists(truestring , testskill.parseToSkills(actualObj)));
     }
 
-    /**
+     /**
      * Compares two lists of strings.
      * @param a list of strings
      * @param b list of strings
@@ -66,8 +66,8 @@ public class SkillsTest {
         Jobs_For_Project test2 = new Jobs_For_Project("test2");
         testjobs.add(test1);
         testjobs.add(test2);
-        Projects_For_A_Skill testcase = new Projects_For_A_Skill("owner id" , "title" , "type" , testjobs);
-        Assert.assertTrue(testcase.getOwnerId().equals("Owner_Id: owner id"));
+        Projects_For_A_Skill testcase = new Projects_For_A_Skill(1234 , "title" , "type" , testjobs);
+        Assert.assertTrue(testcase.getOwnerId().equals("Owner_Id: 1234"));
         Assert.assertTrue(testcase.getTitle().equals(" Title: title"));
         Assert.assertTrue(testcase.getType().equals(" Type: type"));
         Assert.assertTrue(testcase.getAllJobs().equals(" Skills: test1 test2 "));
