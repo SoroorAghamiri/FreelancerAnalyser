@@ -37,20 +37,32 @@ public class HomeController extends Controller{
     }
 
     /**
-     * An action that renders an HTML page with a welcome message.
-     * The configuration in the <code>routes</code> file means that
-     * this method will be called when the application receives a
-     * <code>GET</code> request with a path of <code>/</code>.
-     */
+	 * Action method calls the view template index and render the home page
+	 * @author Kazi Asif Tanim
+	 * @return returns a play.mvc.Result value, representing the HTTP response to
+	 *         send to the client
+	 */
     public Result index(){
         return ok(views.html.index.render());
     }
     
+    /**
+     * Readability class to handale readability calculations
+     * @author Kazi Asif Tanim
+     * @param String of search query
+     * @return returns a CompletionStage<Result> value of the fetch Freelancer.com API request
+     */
     public CompletionStage<Result> getSearchTerm(String query) {
         return  new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + query)
         .thenApply(result -> ok(Readability.processReadability(result)));
     }
     
+    /**
+     * Readability class to handale one readability calculations
+     * @author Kazi Asif Tanim
+     * @param String of preview_description
+     * @return returns a CompletionStage<Result> value of FKGL & FRI score
+     */
     public CompletableFuture<Result> readablity(String description) {
     	return CompletableFuture.completedFuture(ok("Preview Description: " + description + "\n" + Readability.processReadabilityForSingleProject(description)));
     }

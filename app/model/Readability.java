@@ -19,8 +19,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import Helpers.Utils;
 import play.libs.ws.WSResponse;
 
+/**
+ * Readability class to handale readability calculations
+ * @author Kazi Asif Tanim
+ */
 public class Readability {
 	
+	/**
+     * Process WSResponse and calculate FRI & FKGL and return a JsonNode ading the score value
+     * @param WSResponse from API response
+     * @return JsonNode by appending FRI & FKGL score
+     */
 	public static JsonNode processReadability(WSResponse ws) {
 		JsonNode jsonNode = ws.asJson();
     	JsonNode projectJsonNode = ws.asJson().get("result").get("projects");
@@ -53,6 +62,11 @@ public class Readability {
     	return jsonNode;
 	}
 	
+	/**
+     * Process a given String and calculate FRI & FKGL
+     * @param String of preview_description
+     * @return a String by appending FRI & FKGL score and Education level to read
+     */
 	public static String processReadabilityForSingleProject(String description) {
 		int numberOfSentence = Readability.findNumberOfSentence(description);
         int numberOfWord = description.split(" ").length;
@@ -87,6 +101,11 @@ public class Readability {
         return "\nIndex: " + FRI + "\nEducation Level: " + FRIEducationLevel + "\nFKGL: " + FKGL; 
 	}
 	
+	/**
+     * Method to count syllabales from a given string
+     * @param String of preview_description
+     * @return int count number of syllables from a given string
+     */
 	private static int countSyllables(String s) {
         int counter = 0;
         s = s.toLowerCase();
@@ -111,6 +130,11 @@ public class Readability {
         return counter;
     }
 
+	/**
+     * Method to count sentence from a string
+     * @param String of preview_description
+     * @return int count number of sentence from a given string
+     */
     private static int findNumberOfSentence(String input)
     {
         int len=0;     
@@ -135,10 +159,20 @@ public class Readability {
         return len;
     }
     
+    /**
+     * Method to calculate Flesch Readability Index
+     * @param int number of sentence, int number of word, int number of sullable
+     * @return Flaot value of Flesch Redability Index value
+     */
     private static float calculateFleschReadabilityIndex(int numberOfSentence, int numberOfWord, int numberOfSyllable) {
         return (float)Math.round(206.835 - 1.015 * (numberOfWord/numberOfSentence) - 84.6 * (numberOfSyllable/numberOfWord));
     }
     
+    /**
+     * Method to calculate Flesch-Kincaid Grade Level
+     * @param int number of sentence, int number of word, int number of sullable
+     * @return Flaot value of Flesch-Kincaid Grade Level value
+     */
     private static float calculateFKGL(int numberOfSentence, int numberOfWord, int numberOfSyllable) {
         return  (float)(0.39 * (numberOfWord/numberOfSentence) + 11.8 * (numberOfSyllable/numberOfWord) - 15.59);
     }
