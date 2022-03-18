@@ -25,13 +25,12 @@
   <div class="row">
     <div class="col-2"></div>
     <div class="col-8" id="result">
-      
+
     </div>
     <div class="col-2"></div>
     
   </div>
 }
-
 
 <script>
 
@@ -67,7 +66,7 @@
       var projectId = data['result']['projects'][i]['id'];
       var preview_des = data['result']['projects'][i]['preview_description'];
 
-      $("#result").append('<li> <a href="/owner-profile/'+ownerProfileId+'">owner_id</a> '+
+      $("#result").append('<li> <a href="/owner-profile/'+ownerProfileId+'">'+ownerProfileId+'</a> '+
        projectTitle+' Skills: <a href="/skills/'+skill+'">'+skill+'.</a> <a href ="/stats/single/'+projectId+'">Stats.</a> <a target="_blank" href="/readablity/'+encodeURIComponent(preview_des)+'">Readability</a> </li>')
     }
 

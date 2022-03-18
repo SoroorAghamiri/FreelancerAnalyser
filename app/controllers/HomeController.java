@@ -46,7 +46,7 @@ public class HomeController extends Controller{
     public Result index(){
         return ok(views.html.index.render());
     }
-    
+
     /**
      * Readability class to handale readability calculations
      * @author Kazi Asif Tanim
@@ -57,7 +57,7 @@ public class HomeController extends Controller{
         return  new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + query)
         .thenApply(result -> ok(Readability.processReadability(result)));
     }
-    
+
     /**
      * Readability class to handale one readability calculations
      * @author Kazi Asif Tanim
@@ -68,6 +68,12 @@ public class HomeController extends Controller{
     	return CompletableFuture.completedFuture(ok("Preview Description: " + description + "\n" + Readability.processReadabilityForSingleProject(description)));
     }
 
+    /**
+     *
+     *
+     * this return the owner details by the owner_id
+     * @return
+     */
     public CompletionStage<Result> getOwnerDetails(String owner_id){
         return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.OWNER_PROFILE.getUrl() + owner_id)
         .thenApply(result -> ok(result.asJson()));
@@ -116,5 +122,14 @@ public class HomeController extends Controller{
         });
 
         return result;
+    }
+
+    /**
+     *
+     * render ownerView Page and load the data return from the api
+     *
+     */
+    public Result getOwnerView(String owner_id){
+        return ok(views.html.ownerProfile.render());
     }
 }
