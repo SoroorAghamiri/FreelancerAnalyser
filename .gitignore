@@ -16,3 +16,4 @@ server.pid
 .classpath
 .project
 .settings
+.bsp
