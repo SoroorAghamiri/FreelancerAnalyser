@@ -123,4 +123,13 @@ public class HomeController extends Controller{
 
         return result;
     }
+
+    /**
+     *
+     * render ownerView Page and load the data return from the api
+     *
+     */
+    public Result getOwnerView(String owner_id){
+        return ok(views.html.ownerProfile.render());
+    }
 }
