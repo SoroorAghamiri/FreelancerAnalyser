@@ -7,16 +7,32 @@ import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
 import com.typesafe.config.Config;
 
+/**
+ * FreelancerAPIService class to handale all API call
+ * @author Kazi Asif Tanim
+ */
 public class FreelancerAPIService extends Controller implements WSBodyReadables, WSBodyWritables {
     private final WSClient ws;
     private final Config config;
 
+
+    /**
+     * This is a parametarized constractor to pass dependancies
+     * @param WSClient & Config object to pass dependencies from controller
+     * @author Kazi Asif Tanim
+     */
     @Inject
     public FreelancerAPIService(WSClient ws, Config config) {
         this.ws = ws;
         this.config = config;
     }
 
+    /**
+     * This method call's Freelancer.com API
+     * @param String URL of the API
+     * @return a CompletionStage<WSResponse> response to controller
+     * @author Kazi Asif Tanim
+     */
     public CompletionStage<WSResponse> getAPIResult(String url){
         return ws
         .url(url)

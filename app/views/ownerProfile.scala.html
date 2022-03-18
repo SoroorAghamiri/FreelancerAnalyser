@@ -1,12 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+@()
+
+@main("Welcome to Play") {
+    <script>
+    const urlData=window.location.href.split("/");
+    var userID= urlData.pop();
+    var data = $.get("/owner-details/"+userID, function(data, status){
+    var user=data["result"]["users"][userID];
+    console.log(data);
+    document.getElementById("UserName").innerHTML=user["username"];
+    document.getElementById("cityWithCountry").innerHTML=user["location"]["city"]+", "+user["location"]["country"]["name"];
+    var date = new Date(user["registration_date"])
+    document.getElementById("registrationDate").innerHTML="Since "+date.toLocaleDateString();
+    document.getElementById("userRole").innerHTML="Role: "+user["role"];
+    if(user["status"]["email_verified"]){
+
+    document.getElementById("EmailVerified").innerHTML="User Email is Verified";
+    }
+    else{
+    document.getElementById("EmailVerified").innerHTML="User Email is not Verified";
+    }
+    document.getElementById("currency").innerHTML="User Payment method is "+user["primary_currency"]["code"]+" "+user["primary_currency"]["sign"];
+
+    document.getElementById("jobs").innerHTML="Total Job(s): "+user["jobs"].length;
+    document.getElementById("recommendations").innerHTML="recommendations by: "+user["recommendations"];
+    var portfolioData=data["result"]["portfolios"][userID];
+
+    if(!data["result"]["portfolios"].hasOwnProperty(userID)){
+    document.getElementById("portfolio").innerHTML="No Portfolio Found";
+    }
+    else{
+    document.getElementById("portfolio").innerHTML="PortFolio(s) ("+data["result"]["portfolios"][userID].length+")";
+    for(let i=0; i<data["result"]["portfolios"][userID].length;i++){
+        $("#portfolioList").append("<hr><ul>"+data["result"]["portfolios"][userID][i]["title"]+ "<br>"+data["result"]["portfolios"][userID][i]["description"]+"</ul><hr><br>");
+    }
+
+    }
+
+    console.log();
+    });
+
+
+
+        
     
-</body>
-</html>
+</script>
+<center>
+    <div class="card" style="width: 600px; margin-top:50px;">
+    <div class="card-body">
+        <h1 id="UserName"></h1>
+        <h4 id="cityWithCountry"></h4>
+        <i></i><h4 id="registrationDate"></h4></i>
+    </div>
+    </div>
+</center>
+
+<hr>
+<div style="margin-left:30px;margin-right:30px; margin-top:100px;">
+<h3 id="userRole"></h3>
+
+<h4 id="EmailVerified"></h4>
+<p id="currency"></p>
+<p id="jobs"></p>
+<p id="recommendations"></p>
+</div>
+<div>
+    <h4 id="portfolio"></h4>
+    <div id="portfolioList"></div>
+
+</div>
+
+}

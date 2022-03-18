@@ -23,11 +23,11 @@
   </div>
 
   <div class="row">
-    <div class="col-4"></div>
-    <div class="col-4" id="result">
-      
+    <div class="col-2"></div>
+    <div class="col-8" id="result">
+
     </div>
-    <div class="col-4"></div>
+    <div class="col-2"></div>
     
   </div>
 }
@@ -41,10 +41,11 @@
   $.get("/get-search-term/"+$("#search").val(), function(data, status){
     $("#result").append('<div class="mt-5"></div>');
     $("#result").append('<label class="fw-bold">Search terms: '+$("#search").val() + "</label>");
-    $("#result").append('<p>Flesh Reading Ease Index: </p>');
+    $("#result").append(' : <span>Flesh Reading Ease Index: '+data['score']['avgFREI']+'</span>');
+    $("#result").append(' <span>FKGL: '+data['score']['avgFKGL']+'</span>');
 
     //Word stats parsing
-    $("#result").append('<a href =query id="statsLink">Global Stats</a>');
+    $("#result").append('<br><a href =query id="statsLink">Global Stats</a>');
 
         (function() {
         var newId = "statsLink" + statsId
@@ -63,9 +64,10 @@
       var skill =  data['result']['projects'][i]['jobs'][0]['name'];
       var ownerProfileId = data['result']['projects'][i]['owner_id'];
       var projectId = data['result']['projects'][i]['id'];
+      var preview_des = data['result']['projects'][i]['preview_description'];
 
-      $("#result").append('<li> <a href="/owner-profile/'+ownerProfileId+'">owner_id</a> '+
-       projectTitle+' Skills: <a href="/get-skill-search/'+skill+'">'+skill+'.</a> <a href ="/stats/single/'+projectId+'">Stats.</a></li>')
+      $("#result").append('<li> <a href="/owner-profile/'+ownerProfileId+'">'+ownerProfileId+'</a> '+
+       projectTitle+' Skills: <a href="/skills/'+skill+'">'+skill+'.</a> <a href ="/stats/single/'+projectId+'">Stats.</a> <a target="_blank" href="/readablity/'+encodeURIComponent(preview_des)+'">Readability</a> </li>')
     }
 
 

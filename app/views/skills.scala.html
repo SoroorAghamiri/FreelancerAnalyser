@@ -1,0 +1,46 @@
+@(records: List[String])
+
+<html>
+<head>
+  <title>Skills</title>
+
+</head>
+<body>
+<div>
+
+  <div class="container py-5">
+    <header class="text-center text-white py-5">
+      <h1 class="display-4 font-weight-bold mb-4">10 Latest Project Related To The Selected Skill</h1>
+    </header>
+  </div>
+</div>
+
+@for((key) <- records) {
+<div>
+  <p><li>@key</li></p>
+</div>
+}
+<div class="row">
+  <div class="col-4"></div>
+  <div class="col-4" id="result">
+
+  </div>
+  <div class="col-4"></div>
+
+</div>
+</body>
+<style>
+h1 {
+  font-size: 40px;
+}
+
+h2 {
+  font-size: 30px;
+}
+
+p {
+  font-size: 14px;
+}
+</style>
+</html>
+
