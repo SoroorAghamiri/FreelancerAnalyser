@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.typesafe.config.Config;
+import java.lang.*;
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -72,9 +73,20 @@ public class HomeController extends Controller{
         .thenApply(result -> ok(result.asJson()));
     }
 
+    /**
+     * Gets the 10 latest projects related to a skill
+     * @param skill_name the skill selected in the main page
+     * @return skill view, displaying 10 latest projects
+     */
+
     public CompletionStage<Result> getSkillSearch(String skill_name) {
-        return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
-        .thenApply(result -> ok(result.asJson()));
+        CompletionStage<Result> result = new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
+                .thenApply(success ->{
+                    JsonNode received = success.asJson();
+                    return ok(views.html.skills.render(new Skills().parseToSkills(received)));
+                });
+
+        return result;
     }
 
 

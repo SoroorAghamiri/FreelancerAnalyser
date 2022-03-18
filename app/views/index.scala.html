@@ -32,6 +32,7 @@
   </div>
 }
 
+
 <script>
 
   var statsId = 0;
@@ -67,7 +68,7 @@
       var preview_des = data['result']['projects'][i]['preview_description'];
 
       $("#result").append('<li> <a href="/owner-profile/'+ownerProfileId+'">owner_id</a> '+
-       projectTitle+' Skills: <a href="/get-skill-search/'+skill+'">'+skill+'.</a> <a href ="/stats/single/'+projectId+'">Stats.</a> <a target="_blank" href="/readablity/'+encodeURIComponent(preview_des)+'">Readability</a> </li>')
+       projectTitle+' Skills: <a href="/skills/'+skill+'">'+skill+'.</a> <a href ="/stats/single/'+projectId+'">Stats.</a> <a target="_blank" href="/readablity/'+encodeURIComponent(preview_des)+'">Readability</a> </li>')
     }
 
 
