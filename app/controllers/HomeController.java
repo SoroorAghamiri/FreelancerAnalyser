@@ -9,6 +9,7 @@ import play.mvc.*;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
 
+import java.security.PublicKey;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -115,18 +116,26 @@ public class HomeController extends Controller{
      * @param id project id
      * @return CompletionStage<Result> value of a single project
      */
-    public CompletionStage<Result> getSingleProjectStats(Integer id)
+    public CompletionStage<Result> getSingleProjectStats(String id)
     {
         CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
                 getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.PROJECT_BY_ID.getUrl() + id);
 
         CompletionStage<Result> result = response.thenApply(res ->{
+            if(res.getStatus() == 404)
+                return notFound("project not found!");
             JsonNode node = res.asJson();
+
             return ok(views.html.stats.render(WordStat.processProjectStats(node),
-                    "Single project "+id.toString()+" Stats"));
+                    "Single project "+id+" Stats"));
         });
 
         return result;
+    }
+
+    public Result getSingleProjectStatsNotFound()
+    {
+        return notFound("project not found! id is missing...");
     }
 
     /**
