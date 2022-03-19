@@ -9,8 +9,8 @@
     console.log(data);
     document.getElementById("UserName").innerHTML=user["username"];
     document.getElementById("cityWithCountry").innerHTML=user["location"]["city"]+", "+user["location"]["country"]["name"];
-    var date = new Date(user["registration_date"])
-    document.getElementById("registrationDate").innerHTML="Since "+date.toLocaleDateString();
+    //var date = new Date(user["registration_date"])
+    //document.getElementById("registrationDate").innerHTML="Since "+date.toLocaleDateString();
     document.getElementById("userRole").innerHTML="Role: "+user["role"];
     if(user["status"]["email_verified"]){
 
@@ -46,11 +46,9 @@
 </script>
 <center>
     <div class="card" style="width: 600px; margin-top:50px;">
-    <div class="card-body">
         <h1 id="UserName"></h1>
         <h4 id="cityWithCountry"></h4>
-        <i></i><h4 id="registrationDate"></h4></i>
-    </div>
+
     </div>
 </center>
 
