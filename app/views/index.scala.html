@@ -61,13 +61,20 @@
     for(let i=0; i<data['result']['projects'].length; i++){
 
       var projectTitle = data['result']['projects'][i]['title'];
-      var skill =  data['result']['projects'][i]['jobs'][0]['name'];
+
+      var allSkills = new Array();
+      for(let j =0; j < data['result']['projects'][i]['jobs'].length;j++){
+        var skill =  data['result']['projects'][i]['jobs'][j]['name'];
+        allSkills.push('<a href="/skills/'+skill+'">'+skill+'.</a>');
+      }
+      var refined = allSkills.join(' ');
+
       var ownerProfileId = data['result']['projects'][i]['owner_id'];
       var projectId = data['result']['projects'][i]['id'];
       var preview_des = data['result']['projects'][i]['preview_description'];
 
       $("#result").append('<li> <a href="/owner-profile/'+ownerProfileId+'">'+ownerProfileId+'</a> '+
-       projectTitle+' Skills: <a href="/skills/'+skill+'">'+skill+'.</a> <a href ="/stats/single/'+projectId+'">Stats.</a> <a target="_blank" href="/readablity/'+encodeURIComponent(preview_des)+'">Readability</a> </li>')
+       projectTitle+' Skills: '+ refined +' <a href ="/stats/single/'+projectId+'">Stats.</a> <a target="_blank" href="/readablity/'+encodeURIComponent(preview_des)+'">Readability</a> </li>')
     }
 
 
