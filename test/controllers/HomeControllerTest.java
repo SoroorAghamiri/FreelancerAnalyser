@@ -32,6 +32,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static play.mvc.Http.Status.NOT_FOUND;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+import static play.mvc.Http.Status.BAD_REQUEST;
 import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.GET;
 import static play.test.Helpers.route;
@@ -118,6 +122,9 @@ public class HomeControllerTest extends WithApplication {
     }
 
     /**
+     * Tests for the getskillsearch view to check the data on the view.
+     * Makes a fake call to the HomeController, makes a fake request and gets the result.
+     * @author Soroor
      * Test method for readability invalid response
      * @author Kazi Asif Tanim
      */
@@ -134,24 +141,11 @@ public class HomeControllerTest extends WithApplication {
      */
     @Test
     public void testGetSkillSearch(){
-    	Call action = routes.HomeController.getSkillSearch("Java");
+        Call action = routes.HomeController.getSkillSearch("Java");
         Http.RequestBuilder request = Helpers.fakeRequest(action);
-        Result response = Helpers.route(application, request);
+        Result response = Helpers.route(provideApplication(), request);
         assertEquals(response.status(), OK);
-    }
 
-    /**
-     * @author Haitham Abdel-Salam
-     * Junit test for getWordStats
-     * Test method for {@link controllers.HomeController#getWordStats(String)}.
-     */
-    @Test
-    public void testGetWordsStats() {
-        Http.RequestBuilder request = new Http.RequestBuilder()
-                .method(GET)
-                .uri("/stats/unity");
-        Result result = route(application,request);
-        assertEquals(OK, result.status());
     }
 
     /**
