@@ -39,7 +39,7 @@ public class HomeControllerTest extends WithApplication {
      */
     @Test
     public void testGetSearchTerm(){
-        Http.RequestBuilder request = new Http.RequestBuilder()
+        Http.RequestBuilder request =  new Http.RequestBuilder()
                 .method(GET)
                 .uri("/get-search-term/java");
         Result result = route(app,request);

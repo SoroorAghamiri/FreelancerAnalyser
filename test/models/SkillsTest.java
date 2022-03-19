@@ -1,12 +1,11 @@
 package models;
 
-import akka.event.Logging;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.Jobs_For_Project;
 import model.Projects_For_A_Skill;
-import model.Skills;
+import Helpers.Skills;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package model;
+package Helpers;
 
 public enum FreelanceAPI {
     BASE_URL("https://www.freelancer.com"),

@@ -1,4 +1,4 @@
-package model;
+package Helpers;
 
 import Helpers.Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import model.AllProjects;
+import model.Project;
 import org.checkerframework.common.aliasing.qual.Unique;
 
 import java.util.*;
@@ -16,21 +18,30 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.toList;
 
+/**
+ * Class that handles parsing and creation of words statistics using streams
+ * @author Haitham Abdel-Salam
+ */
 public class WordStat {
 
-    public static Integer uniqueWordsCount;
     public static ArrayList<Integer> uniqueWords;
 
-    public WordStat()
-    {
+    public WordStat() {}
 
-    }
-
+    /**
+     * Creats a static instance of unique words
+     */
     static
     {
         uniqueWords = new ArrayList<>();
     }
 
+    /**
+     * Processes projects returned in JSON format and produces the words statistics for all projects
+     * @Author Haitham Abdel-Salam
+     * @param jsonNode json data to be processed
+     * @return  map with Unique word as a key and frequency as a value.
+     */
     public static Map<String, Integer> processAllProjectsStats(JsonNode jsonNode) {
 
         AllProjects projects = Utils.convertNodeToAllProjects(jsonNode);
@@ -39,6 +50,12 @@ public class WordStat {
         return processWords(combinedStream);
     }
 
+    /**
+     * Processes word statistics for a single project
+     * @Author Haitham Abdel-Salam
+     * @param jsonNode json data to be processed
+     * @return map with Unique word as a key and frequency as a value.
+     */
     public static Map<String, Integer> processProjectStats(JsonNode jsonNode) {
 
         Project project = Utils.convertNodeToProject(jsonNode);
@@ -46,6 +63,12 @@ public class WordStat {
         return processWords(combinedStream);
     }
 
+    /**
+     * Processes a collection of strings and gets unique words and its frequencies
+     * @Author Haitham Abdel-Salam
+     * @param combinedStream List of all strings to be processed
+     * @return @return map with Unique word as a key and frequency as a value.
+     */
     private static  Map<String, Integer> processWords(List<String> combinedStream)
     {
         List<String> separatedWords = combinedStream.stream().map(w -> w
