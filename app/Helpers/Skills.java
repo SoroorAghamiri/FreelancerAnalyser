@@ -1,4 +1,4 @@
-package Helpers;
+package model;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,7 +40,7 @@ public class Skills {
 	 */
 	public List<String> parseToSkills(JsonNode receivedData){
 		String result = receivedData.toPrettyString();
-		List<Projects_For_A_Skill> allproject= stringToProjectForASkill(result);
+		List<ProjectsForASkill> allproject= stringToProjectForASkill(result);
 		List<String> foundprojectstring = new ArrayList<>();
 		if(allproject != null){
 			foundprojectstring = allproject.stream().map(p->p.getOwnerId().concat(p.getTitle().concat(p.getType().concat(p.getAllJobs())))).collect(Collectors.toList());
@@ -52,27 +52,27 @@ public class Skills {
 	}
 
 	/**
-	 * Gets the json string, parses it to a list of <code>Projects_For_A_Skill</code>,
+	 * Gets the json string, parses it to a list of <code>ProjectsForASkill</code>,
 	 * fetches the list of jobs related to each project and places them inside the list.
 	 * @param received json string
-	 * @return list of Projects_For_A_Skills
+	 * @return list of ProjectsForASkills
 	 */
-	public static List<Projects_For_A_Skill> stringToProjectForASkill(String received){
+	public static List<ProjectsForASkill> stringToProjectForASkill(String received){
 		try {
 			ObjectMapper objectmapper = new ObjectMapper();
 			objectmapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			ArrayNode projectarray = null;
 			projectarray = (ArrayNode) new ObjectMapper().readTree(received).get("result").get("projects");
-			List<Projects_For_A_Skill> allproject = new ArrayList<>();
+			List<ProjectsForASkill> allproject = new ArrayList<>();
 			for(int i =0; i < projectarray.size();i++){
 				String projectasstring = projectarray.get(i).toPrettyString();
 				ArrayNode relatedjobs = (ArrayNode) new ObjectMapper().readTree(projectasstring).get("jobs");
-				List<Jobs_For_Project> jobs = new ArrayList<>();
+				List<JobsForProject> jobs = new ArrayList<>();
 				for(int j = 0; j < relatedjobs.size();j++){
-					Jobs_For_Project newjob = new Jobs_For_Project(relatedjobs.get(j).get("name").textValue());
+					JobsForProject newjob = new JobsForProject(relatedjobs.get(j).get("name").textValue());
 					jobs.add(newjob);
 				}
-				Projects_For_A_Skill newproject = new Projects_For_A_Skill(projectarray.get(i).get("owner_id").intValue() ,
+				ProjectsForASkill newproject = new ProjectsForASkill(projectarray.get(i).get("owner_id").intValue() ,
 						projectarray.get(i).get("title").textValue(), projectarray.get(i).get("type").textValue(), jobs);
 				allproject.add(newproject);
 			}
