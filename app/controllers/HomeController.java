@@ -89,7 +89,7 @@ public class HomeController extends Controller{
         CompletionStage<Result> result = new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
                 .thenApply(success ->{
                     JsonNode received = success.asJson();
-                    return ok(views.html.skills.render(new Skills().parseToSkills(received)));
+                    return ok(views.html.skills.render(new Skills().parseToSkills(received) , skill_name));
                 });
 
         return result;

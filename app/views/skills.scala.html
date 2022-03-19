@@ -1,4 +1,4 @@
-@(records: List[String])
+@(records: List[String], requested : String)
 
 <html>
 <head>
@@ -10,7 +10,8 @@
 
   <div class="container py-5">
     <header class="text-center text-white py-5">
-      <h1 class="display-4 font-weight-bold mb-4">10 Latest Project Related To The Selected Skill</h1>
+      <h1 class="display-4 font-weight-bold mb-4">10 Latest Project Related To @requested</h1>
+      <h3><a href="/">Home Page</a></h3>
     </header>
   </div>
 </div>
@@ -36,6 +37,11 @@ h1 {
 
 h2 {
   font-size: 30px;
+}
+
+h3{
+  font-size : 20px;
+  color: blue;
 }
 
 p {
