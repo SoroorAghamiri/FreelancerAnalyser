@@ -60,14 +60,16 @@
 
     for(let i=0; i<data['result']['projects'].length; i++){
 
-      var projectTitle = data['result']['projects'][i]['title'];
+      var projectTitle = ', <a target="_blank" href="https://www.freelancer.com/projects/'+data['result']['projects'][i]['seo_url']+'">'+data['result']['projects'][i]['title']+'</a>' ;
       var skill =  data['result']['projects'][i]['jobs'][0]['name'];
       var ownerProfileId = data['result']['projects'][i]['owner_id'];
       var projectId = data['result']['projects'][i]['id'];
       var preview_des = data['result']['projects'][i]['preview_description'];
+      var submitDate = new Date(data['result']['projects'][i]['submitdate'] * 1000).toDateString();
+      var type = data['result']['projects'][i]['type'];
 
-      $("#result").append('<li> <a href="/owner-profile/'+ownerProfileId+'">'+ownerProfileId+'</a> '+
-       projectTitle+' Skills: <a href="/skills/'+skill+'">'+skill+'.</a> <a href ="/stats/single/'+projectId+'">Stats.</a> <a target="_blank" href="/readablity/'+encodeURIComponent(preview_des)+'">Readability</a> </li>')
+      $("#result").append('<li> <a href="/owner-profile/'+ownerProfileId+'">'+ownerProfileId+'</a> '+ submitDate +
+       projectTitle + ', Type: ' + type +', Skills: <a href="/skills/'+skill+'">'+skill+'.</a> <a href ="/stats/single/'+projectId+'">Stats.</a> <a target="_blank" href="/readablity/'+encodeURIComponent(preview_des)+'">Readability</a> </li>')
     }
 
 
