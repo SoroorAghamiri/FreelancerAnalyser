@@ -143,7 +143,7 @@ public class HomeControllerTest extends WithApplication {
     public void testGetSkillSearch(){
         Call action = routes.HomeController.getSkillSearch("Java");
         Http.RequestBuilder request = Helpers.fakeRequest(action);
-        Result response = Helpers.route(provideApplication(), request);
+        Result response = Helpers.route(application, request);
         assertEquals(response.status(), OK);
 
     }
