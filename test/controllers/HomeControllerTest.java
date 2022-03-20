@@ -22,6 +22,17 @@ import play.test.WithApplication;
 import play.test.WithServer;
 import play.test.*;
 import static play.test.Helpers.*;
+import org.junit.Test;
+import play.Application;
+import play.inject.guice.GuiceApplicationBuilder;
+import play.mvc.Http;
+import play.mvc.Result;
+import play.test.WithApplication;
+
+import static org.junit.Assert.assertEquals;
+import static play.mvc.Http.Status.OK;
+import static play.test.Helpers.GET;
+import static play.test.Helpers.route;
 
 
 import java.io.UnsupportedEncodingException;
@@ -241,9 +252,22 @@ public class HomeControllerTest extends WithApplication {
      */
     @Test
     public void testGetOwnerDetails(){
-        Call action = routes.HomeController.getOwnerDetails("12033578");
-        Http.RequestBuilder request = Helpers.fakeRequest(action);
-        Result response = Helpers.route(application, request);
-        assertEquals(response.status(), OK);
+            Http.RequestBuilder request = new Http.RequestBuilder()
+                    .method(GET)
+                    .uri("/owner-details/3904785");
+            Result result = route(app,request);
+            assertEquals(OK, result.status());
+    }
+    /**
+     * test methods for the owner view if it gives result ok
+     * @author Bariq
+     */
+    @Test
+    public void testGetOwnerView(){
+            Http.RequestBuilder request = new Http.RequestBuilder()
+                    .method(GET)
+                    .uri("/owner-profile/27343515");
+            Result result = route(app,request);
+            assertEquals(OK, result.status());
     }
 }
