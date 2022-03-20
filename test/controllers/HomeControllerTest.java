@@ -41,7 +41,13 @@ import static play.test.Helpers.GET;
 import static play.test.Helpers.route;
 import static org.hamcrest.CoreMatchers.*;
 
-
+/**
+ * Unit test for play framework Home Controller
+ * @author Haitham Abde-Salam
+ * @author Soroor Aghimiri
+ * @author Kazi Asif Tanim
+ * @author Bariq Ishtiaq
+ */
 public class HomeControllerTest extends WithApplication {
 
     @Inject
@@ -79,9 +85,12 @@ public class HomeControllerTest extends WithApplication {
         Helpers.stop(application);
     }
 
+    /**
+     * Testing index
+     */
     @Test
     public void testIndex() {
-        Http.RequestBuilder request = new Http.RequestBuilder()
+        Http.RequestBuilder request = Helpers.fakeRequest()
                 .method(GET)
                 .uri("/");
 
@@ -148,12 +157,11 @@ public class HomeControllerTest extends WithApplication {
 
     /**
      * @author Haitham Abdel-Salam
-     * Junit test for getWordStats
-     * Test method for {@link controllers.HomeController#getSingleProjectStats(String)} (Integer)}.
+     * Testing getting single valid project
      */
     @Test
     public void testGetSingleProjectStats() {
-        Http.RequestBuilder request = new Http.RequestBuilder()
+        Http.RequestBuilder request = Helpers.fakeRequest()
                 .method(GET)
                 .uri("/stats/single/3324623");
         Result result = route(application,request);
@@ -162,12 +170,11 @@ public class HomeControllerTest extends WithApplication {
 
     /**
      * Covering equivalent classes for getSingleProjectStats. Invalid non integer values mix of characters and integers
-     * Test method for {@link controllers.HomeController#getSingleProjectStats(String)} (Integer)}.
      * @author Haitham Abdel-Salam
      */
     @Test
     public void testGetSingleProjectStatsInvalidMix() {
-        Http.RequestBuilder request = new Http.RequestBuilder()
+        Http.RequestBuilder request = Helpers.fakeRequest()
                 .method(GET)
                 .uri("/stats/single/xyxx123");
         Result result = route(application,request);
@@ -175,13 +182,12 @@ public class HomeControllerTest extends WithApplication {
     }
 
     /**
-     * Covering equivalent classes for getSingleProjectStats. Invalid non integer only characters
-     * Test method for {@link controllers.HomeController#getSingleProjectStats(String)} (Integer)}.
+     * Covering equivalent classes for getSingleProjectStats. Invalid non-integer only characters
      * @author Haitham Abdel-Salam
      */
     @Test
     public void testGetSingleProjectStatsInvalidCharacters() {
-        Http.RequestBuilder request = new Http.RequestBuilder()
+        Http.RequestBuilder request = Helpers.fakeRequest()
                 .method(GET)
                 .uri("/stats/single/abcdefg");
         Result result = route(application,request);
@@ -195,11 +201,38 @@ public class HomeControllerTest extends WithApplication {
      */
     @Test
     public void testGetSingleProjectStatsInvalidNoURL() {
-        Http.RequestBuilder request = new Http.RequestBuilder()
+        Http.RequestBuilder request = Helpers.fakeRequest()
                 .method(GET)
                 .uri("/stats/single/");
         Result result = route(application,request);
         assertEquals(NOT_FOUND, result.status());
+    }
+
+    /**
+     * Covering equivalent classes for getSingleProjectStats. Invalid no id in URL
+     * Test method for {@link HomeController#getSingleProjectStatsNotFound()}.
+     * @author Haitham Abdel-Salam
+     */
+    @Test
+    public void testGetAllProjectsInvalid() {
+        Http.RequestBuilder request = Helpers.fakeRequest()
+                .method(GET)
+                .uri("/stats/");
+        Result result = route(application,request);
+        assertEquals(NOT_FOUND, result.status());
+    }
+
+    /**
+     * Tests valid getWordStats request
+     * @author Haitham Abdel-Salam
+     */
+    @Test
+    public void testGetAllProjectStats() {
+        Http.RequestBuilder request = Helpers.fakeRequest()
+                .method(GET)
+                .uri("/stats/Unity");
+        Result result = route(application,request);
+        assertEquals(OK, result.status());
     }
 
     /**
