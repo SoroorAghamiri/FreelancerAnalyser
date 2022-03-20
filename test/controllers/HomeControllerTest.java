@@ -3,15 +3,25 @@ package controllers;
 import org.junit.Test;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
+import play.mvc.Call;
 import play.mvc.Http;
 import play.mvc.Result;
+import play.test.Helpers;
 import play.test.WithApplication;
+import play.test.WithServer;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static play.mvc.Http.Status.NOT_FOUND;
 import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.GET;
 import static play.test.Helpers.route;
+import static org.hamcrest.CoreMatchers.*;
 
 public class HomeControllerTest extends WithApplication {
 
@@ -35,23 +45,50 @@ public class HomeControllerTest extends WithApplication {
      */
     @Test
     public void testGetSearchTerm(){
-        Http.RequestBuilder request =  new Http.RequestBuilder()
-                .method(GET)
-                .uri("/get-search-term/java");
-        Result result = route(app,request);
+        Http.RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/get-search-term/java");
+        Result result = route(app, request);
         assertEquals(OK, result.status());
     }
 
     /**
-     * test methods for the owner details if it gives result ok
+     * Test method for getSearchTerm invalid response
+     * @author Kazi Asif Tanim
      */
     @Test
-    public void testGetOwnerDetails(){
-        Http.RequestBuilder request = new Http.RequestBuilder()
-                .method(GET)
-                .uri("/owner-details/27343515");
-        Result result = route(app,request);
+    public void testGetSearchTermInvalid(){
+        Http.RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/get-search-term/");
+        Result result = route(app, request);
+        assertEquals(NOT_FOUND, result.status());
+    }
+
+    /**
+     * Test method for readability in HomeController
+     * @author Kazi Asif Tanim
+     */
+    @Test
+    public void testReadablity() throws UnsupportedEncodingException {
+        Http.RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/readablity/" + URLEncoder.encode("I am a representative of an open source first person shooter game. We are looking for a programmer t", StandardCharsets.UTF_8.toString()));
+        Result result = Helpers.route(app, request);
         assertEquals(OK, result.status());
+    }
+
+    /**
+     * Test method for readability invalid response
+     * @author Kazi Asif Tanim
+     */
+    @Test
+    public void testReadablityInvalid() throws UnsupportedEncodingException {
+        Http.RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/readablity/" + URLEncoder.encode("", StandardCharsets.UTF_8.toString()));
+        Result result = Helpers.route(app, request);
+        assertEquals(NOT_FOUND, result.status());
+    }
+
+    @Test
+    public void testGetSkillSearch(){
+    	Call action = routes.HomeController.getSkillSearch("Java");
+        Http.RequestBuilder request = Helpers.fakeRequest(action);
+        Result response = Helpers.route(provideApplication(), request);
+        assertEquals(response.status(), OK);
     }
 
     /**
