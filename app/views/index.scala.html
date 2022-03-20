@@ -39,23 +39,7 @@
 
   $("#go-button").click(function(){
   $.get("/get-search-term/"+$("#search").val(), function(data, status){
-    $("#result").append('<div class="mt-5"></div>');
-    $("#result").append('<label class="fw-bold">Search terms: '+$("#search").val() + "</label>");
-    $("#result").append(' : <span>Flesh Reading Ease Index: '+data['score']['avgFREI']+'</span>');
-    $("#result").append(' <span>FKGL: '+data['score']['avgFKGL']+'</span> <br><a href =query id="statsLink">Global Stats</a>');
 
-    //Word stats parsing
-
-        (function() {
-        var newId = "statsLink" + statsId
-        document.getElementById("statsLink").id = newId;
-        var query = $("#search").val();
-        var strLink = "stats/" + query;
-        document.getElementById(newId).setAttribute("href",strLink);
-    })();
-    statsId++;
-    $("#stats").addClass("enableStats");
-    ///
 
     for(let i=0; i<data['result']['projects'].length; i++){
 
@@ -67,10 +51,27 @@
       var submitDate = new Date(data['result']['projects'][i]['submitdate'] * 1000).toDateString();
       var type = data['result']['projects'][i]['type'];
 
-      $("#result").append('<li> <a href="/owner-profile/'+ownerProfileId+'">'+ownerProfileId+'</a> '+ submitDate +
+      $("#result").prepend('<li> <a href="/owner-profile/'+ownerProfileId+'">'+ownerProfileId+'</a> '+ submitDate +
        projectTitle + ', Type: ' + type +', Skills: <a href="/skills/'+skill+'">'+skill+'.</a> <a href ="/stats/single/'+projectId+'">Stats.</a> <a target="_blank" href="/readablity/'+encodeURIComponent(preview_des)+'">Readability</a> </li>')
     }
 
+    $("#result").prepend(' <span>FKGL: '+data['score']['avgFKGL']+'</span> <br><a href =query id="statsLink">Global Stats</a>');
+    $("#result").prepend(' : <span>Flesh Reading Ease Index: '+data['score']['avgFREI']+'</span>');
+    $("#result").prepend('<label class="fw-bold">Search terms: '+$("#search").val() + "</label>");
+    $("#result").prepend('<div class="mt-5"></div>');
+
+    //Word stats parsing
+
+    (function() {
+      var newId = "statsLink" + statsId
+      document.getElementById("statsLink").id = newId;
+      var query = $("#search").val();
+      var strLink = "stats/" + query;
+      document.getElementById(newId).setAttribute("href",strLink);
+    })();
+    statsId++;
+    $("#stats").addClass("enableStats");
+    ///
 
     $("#search").val("");
   });
