@@ -1,7 +1,7 @@
 package models;
 
 import junit.framework.TestCase;
-import model.FreelanceAPI;
+import Helpers.FreelanceAPI;
 
 /**
  * Test class for FreelanceAPI class

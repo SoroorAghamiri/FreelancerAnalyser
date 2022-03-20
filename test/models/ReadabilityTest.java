@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.routes;
 import junit.framework.TestCase;
-import model.Readability;
+import Helpers.Readability;
 import org.mockito.Mockito;
 import play.libs.ws.WSResponse;
 import play.mvc.Call;
