@@ -203,4 +203,16 @@ public class HomeControllerTest extends WithApplication {
         Result result = route(application,request);
         assertEquals(NOT_FOUND, result.status());
     }
+
+    /**
+     * test methods for the owner details if it gives result ok
+     * @author Bariq
+     */
+    @Test
+    public void testGetOwnerDetails(){
+        Call action = routes.HomeController.getOwnerDetails("12033578");
+        Http.RequestBuilder request = Helpers.fakeRequest(action);
+        Result response = Helpers.route(application, request);
+        assertEquals(response.status(), OK);
+    }
 }
