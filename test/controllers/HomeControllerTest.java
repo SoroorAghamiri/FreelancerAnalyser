@@ -1,14 +1,28 @@
 package controllers;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Module;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import play.Application;
+import play.ApplicationLoader;
+import play.Environment;
 import play.inject.guice.GuiceApplicationBuilder;
+import play.inject.guice.GuiceApplicationLoader;
 import play.mvc.Call;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.test.Helpers;
 import play.test.WithApplication;
 import play.test.WithServer;
+import play.test.*;
+import static play.test.Helpers.*;
+
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -23,11 +37,34 @@ import static play.test.Helpers.GET;
 import static play.test.Helpers.route;
 import static org.hamcrest.CoreMatchers.*;
 
+
 public class HomeControllerTest extends WithApplication {
 
-    @Override
-    protected Application provideApplication() {
-        return new GuiceApplicationBuilder().build();
+    @Inject
+    Application application;
+
+    @Before
+    public void setup() {
+        Module testModule =
+                new AbstractModule() {
+                    @Override
+                    public void configure() {
+                    }
+                };
+
+        GuiceApplicationBuilder builder =
+                new GuiceApplicationLoader()
+                        .builder(new ApplicationLoader.Context(Environment.simple()))
+                        .overrides(testModule);
+        Guice.createInjector(builder.applicationModule()).injectMembers(this);
+
+        Helpers.start(application);
+    }
+
+
+    @After
+    public void teardown() {
+        Helpers.stop(application);
     }
 
     @Test
@@ -36,7 +73,7 @@ public class HomeControllerTest extends WithApplication {
                 .method(GET)
                 .uri("/");
 
-        Result result = route(app, request);
+        Result result = route(application, request);
         assertEquals(OK, result.status());
     }
 
@@ -46,7 +83,7 @@ public class HomeControllerTest extends WithApplication {
     @Test
     public void testGetSearchTerm(){
         Http.RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/get-search-term/java");
-        Result result = route(app, request);
+        Result result = route(application, request);
         assertEquals(OK, result.status());
     }
 
@@ -57,7 +94,7 @@ public class HomeControllerTest extends WithApplication {
     @Test
     public void testGetSearchTermInvalid(){
         Http.RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/get-search-term/");
-        Result result = route(app, request);
+        Result result = route(application, request);
         assertEquals(NOT_FOUND, result.status());
     }
 
@@ -68,7 +105,7 @@ public class HomeControllerTest extends WithApplication {
     @Test
     public void testReadablity() throws UnsupportedEncodingException {
         Http.RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/readablity/" + URLEncoder.encode("I am a representative of an open source first person shooter game. We are looking for a programmer t", StandardCharsets.UTF_8.toString()));
-        Result result = Helpers.route(app, request);
+        Result result = Helpers.route(application, request);
         assertEquals(OK, result.status());
     }
 
@@ -79,7 +116,7 @@ public class HomeControllerTest extends WithApplication {
     @Test
     public void testReadablityInvalid() throws UnsupportedEncodingException {
         Http.RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/readablity/" + URLEncoder.encode("", StandardCharsets.UTF_8.toString()));
-        Result result = Helpers.route(app, request);
+        Result result = Helpers.route(application, request);
         assertEquals(NOT_FOUND, result.status());
     }
 
@@ -87,7 +124,7 @@ public class HomeControllerTest extends WithApplication {
     public void testGetSkillSearch(){
     	Call action = routes.HomeController.getSkillSearch("Java");
         Http.RequestBuilder request = Helpers.fakeRequest(action);
-        Result response = Helpers.route(provideApplication(), request);
+        Result response = Helpers.route(application, request);
         assertEquals(response.status(), OK);
     }
 
@@ -101,7 +138,7 @@ public class HomeControllerTest extends WithApplication {
         Http.RequestBuilder request = new Http.RequestBuilder()
                 .method(GET)
                 .uri("/stats/unity");
-        Result result = route(app,request);
+        Result result = route(application,request);
         assertEquals(OK, result.status());
     }
 
@@ -115,7 +152,7 @@ public class HomeControllerTest extends WithApplication {
         Http.RequestBuilder request = new Http.RequestBuilder()
                 .method(GET)
                 .uri("/stats/single/3324623");
-        Result result = route(app,request);
+        Result result = route(application,request);
         assertEquals(OK, result.status());
     }
 
@@ -129,7 +166,7 @@ public class HomeControllerTest extends WithApplication {
         Http.RequestBuilder request = new Http.RequestBuilder()
                 .method(GET)
                 .uri("/stats/single/xyxx123");
-        Result result = route(app,request);
+        Result result = route(application,request);
         assertEquals(NOT_FOUND, result.status());
     }
 
@@ -143,7 +180,7 @@ public class HomeControllerTest extends WithApplication {
         Http.RequestBuilder request = new Http.RequestBuilder()
                 .method(GET)
                 .uri("/stats/single/abcdefg");
-        Result result = route(app,request);
+        Result result = route(application,request);
         assertEquals(NOT_FOUND, result.status());
     }
 
@@ -157,7 +194,7 @@ public class HomeControllerTest extends WithApplication {
         Http.RequestBuilder request = new Http.RequestBuilder()
                 .method(GET)
                 .uri("/stats/single/");
-        Result result = route(app,request);
+        Result result = route(application,request);
         assertEquals(NOT_FOUND, result.status());
     }
 }
