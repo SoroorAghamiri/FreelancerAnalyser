@@ -69,7 +69,7 @@ public class WordStat {
      * @param combinedStream List of all strings to be processed
      * @return @return map with Unique word as a key and frequency as a value.
      */
-    private static  Map<String, Integer> processWords(List<String> combinedStream)
+    public static  Map<String, Integer> processWords(List<String> combinedStream)
     {
         List<String> separatedWords = combinedStream.stream().map(w -> w
                         .replaceAll("[^A-Za-z0-9 ]", "").split(" "))
