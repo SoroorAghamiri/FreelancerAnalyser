@@ -252,12 +252,12 @@ public class HomeControllerTest extends WithApplication {
      */
     @Test
     public void testGetOwnerDetails(){
-            Http.RequestBuilder request = new Http.RequestBuilder()
-                    .method(GET)
-                    .uri("/owner-details/3904785");
-            Result result = route(app,request);
-            assertEquals(OK, result.status());
+        Call action = routes.HomeController.getOwnerDetails("12033578");
+        Http.RequestBuilder request = Helpers.fakeRequest(action);
+        Result response = Helpers.route(provideApplication(), request);
+        assertEquals(response.status(), OK);
     }
+    
     /**
      * test methods for the owner view if it gives result ok
      * @author Bariq
