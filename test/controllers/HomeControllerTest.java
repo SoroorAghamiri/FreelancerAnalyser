@@ -91,6 +91,7 @@ public class HomeControllerTest extends WithApplication {
 
     /**
      * Test the search term from the url
+     * @author Kazi Asif Tanim
      */
     @Test
     public void testGetSearchTerm(){
@@ -122,9 +123,6 @@ public class HomeControllerTest extends WithApplication {
     }
 
     /**
-     * Tests for the getskillsearch view to check the data on the view.
-     * Makes a fake call to the HomeController, makes a fake request and gets the result.
-     * @author Soroor
      * Test method for readability invalid response
      * @author Kazi Asif Tanim
      */
