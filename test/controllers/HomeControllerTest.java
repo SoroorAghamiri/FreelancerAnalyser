@@ -209,6 +209,33 @@ public class HomeControllerTest extends WithApplication {
     }
 
     /**
+     * Covering equivalent classes for getSingleProjectStats. Invalid no id in URL
+     * Test method for {@link HomeController#getSingleProjectStatsNotFound()}.
+     * @author Haitham Abdel-Salam
+     */
+    @Test
+    public void testGetAllProjectsInvalid() {
+        Http.RequestBuilder request = Helpers.fakeRequest()
+                .method(GET)
+                .uri("/stats/");
+        Result result = route(application,request);
+        assertEquals(NOT_FOUND, result.status());
+    }
+
+    /**
+     * Tests valid getWordStats request
+     * @author Haitham Abdel-Salam
+     */
+    @Test
+    public void testGetAllProjectStats() {
+        Http.RequestBuilder request = Helpers.fakeRequest()
+                .method(GET)
+                .uri("/stats/Unity");
+        Result result = route(application,request);
+        assertEquals(OK, result.status());
+    }
+
+    /**
      * test methods for the owner details if it gives result ok
      * @author Bariq
      */

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.AllProjects;
+import model.Project;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -109,5 +110,54 @@ public class AllProjectsWordStatsTest {
         AllProjects  projects = Utils.convertNodeToAllProjects(node);
 
         assertTrue(projects != null);
+    }
+
+    /**
+     * Testing getting projects
+     * @author Haitham Abdel-Salam
+     */
+    @Test
+    public void getProjectsTest() {
+
+        List<Project> projects = new ArrayList<Project>();
+        projects.add(new Project());
+        projects.add(new Project());
+
+        AllProjects  allProjects = new AllProjects(projects);
+
+        assertTrue(allProjects.getProjects() != null);
+        assertTrue(allProjects.getProjects().size() == projects.size());
+    }
+
+    /**
+     * Testing getting Titles
+     * @author Haitham Abdel-Salam
+     */
+    @Test
+    public void getTitlesTest() {
+
+        List<Project> projects = new ArrayList<Project>();
+        projects.add(new Project());
+        projects.add(new Project());
+
+        AllProjects  allProjects = new AllProjects(projects);
+
+        assertTrue(allProjects.getTitles() != null);
+    }
+
+    /**
+     * Testing getting description
+     * @author Haitham Abdel-Salam
+     */
+    @Test
+    public void getDescriptionTest() {
+
+        List<Project> projects = new ArrayList<Project>();
+        projects.add(new Project());
+        projects.add(new Project());
+
+        AllProjects  allProjects = new AllProjects(projects);
+
+        assertTrue(allProjects.getDescriptions() != null);
     }
 }

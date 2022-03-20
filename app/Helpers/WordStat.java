@@ -26,8 +26,6 @@ public class WordStat {
 
     public static ArrayList<Integer> uniqueWords;
 
-    public WordStat() {}
-
     /**
      * Creats a static instance of unique words
      */
