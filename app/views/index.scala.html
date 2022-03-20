@@ -33,50 +33,56 @@
 }
 
 <script>
+var statsId = 0;
+$("#stats").addClass("disableStats");
 
-  var statsId = 0;
-  $("#stats").addClass("disableStats");
-
-  $("#go-button").click(function(){
-  $.get("/get-search-term/"+$("#search").val(), function(data, status){
+$("#go-button").click(function() {
+    $.get("/get-search-term/" + $("#search").val(), function(data, status) {
 
 
-    for(let i=0; i<data['result']['projects'].length; i++){
+        for (let i = 0; i < data['result']['projects'].length; i++) {
 
-      var projectTitle = ', <a target="_blank" href="https://www.freelancer.com/projects/'+data['result']['projects'][i]['seo_url']+'">'+data['result']['projects'][i]['title']+'</a>' ;
-      var skill =  data['result']['projects'][i]['jobs'][0]['name'];
-      var ownerProfileId = data['result']['projects'][i]['owner_id'];
-      var projectId = data['result']['projects'][i]['id'];
-      var preview_des = data['result']['projects'][i]['preview_description'];
-      var submitDate = new Date(data['result']['projects'][i]['submitdate'] * 1000).toDateString();
-      var type = data['result']['projects'][i]['type'];
+            var projectTitle = ', <a target="_blank" href="https://www.freelancer.com/projects/' + data['result']['projects'][i]['seo_url'] + '">' + data['result']['projects'][i]['title'] + '</a>';
+            var ownerProfileId = data['result']['projects'][i]['owner_id'];
+            var projectId = data['result']['projects'][i]['id'];
+            var preview_des = data['result']['projects'][i]['preview_description'];
+            var submitDate = new Date(data['result']['projects'][i]['submitdate'] * 1000).toDateString();
+            var type = data['result']['projects'][i]['type'];
 
-      $("#result").prepend('<li> <a href="/owner-profile/'+ownerProfileId+'">'+ownerProfileId+'</a> '+ submitDate +
-       projectTitle + ', Type: ' + type +', Skills: <a href="/skills/'+skill+'">'+skill+'.</a> <a href ="/stats/single/'+projectId+'">Stats.</a> <a target="_blank" href="/readablity/'+encodeURIComponent(preview_des)+'">Readability</a> </li>')
-    }
+            var allSkills = new Array();
+            for (let j = 0; j < data['result']['projects'][i]['jobs'].length; j++) {
+                var skill = data['result']['projects'][i]['jobs'][j]['name'];
+                allSkills.push('<a href="/skills/' + skill + '">' + skill + '.</a>');
+            }
+            var refined = allSkills.join(' ');
 
-    $("#result").prepend(' <span>FKGL: '+data['score']['avgFKGL']+'</span> <br><a href =query id="statsLink">Global Stats</a>');
-    $("#result").prepend(' : <span>Flesh Reading Ease Index: '+data['score']['avgFREI']+'</span>');
-    $("#result").prepend('<label class="fw-bold">Search terms: '+$("#search").val() + "</label>");
-    $("#result").prepend('<div class="mt-5"></div>');
 
-    //Word stats parsing
+            $("#result").prepend('<li> <a href="/owner-profile/' + ownerProfileId + '">' + ownerProfileId + '</a> ' + submitDate +
+                projectTitle + ', Type: ' + type + ', <b>[</b>Skills: ' + refined + '<b>]</b>.</a> <a href ="/stats/single/' + projectId + '">Stats.</a> <a target="_blank" href="/readablity/' + encodeURIComponent(preview_des) + '">Readability</a> </li>')
+        }
 
-    (function() {
-      var newId = "statsLink" + statsId
-      document.getElementById("statsLink").id = newId;
-      var query = $("#search").val();
-      var strLink = "stats/" + query;
-      document.getElementById(newId).setAttribute("href",strLink);
-    })();
-    statsId++;
-    $("#stats").addClass("enableStats");
-    ///
+        $("#result").prepend(' <span>FKGL: ' + data['score']['avgFKGL'] + '</span> <br><a href =query id="statsLink">Global Stats</a>');
+        $("#result").prepend(' : <span>Flesh Reading Ease Index: ' + data['score']['avgFREI'] + '</span>');
+        $("#result").prepend('<label class="fw-bold">Search terms: ' + $("#search").val() + "</label>");
+        $("#result").prepend('<div class="mt-5"></div>');
 
-    $("#search").val("");
-  });
+        //Word stats parsing
 
-}); 
+        (function() {
+            var newId = "statsLink" + statsId
+            document.getElementById("statsLink").id = newId;
+            var query = $("#search").val();
+            var strLink = "stats/" + query;
+            document.getElementById(newId).setAttribute("href", strLink);
+        })();
+        statsId++;
+        $("#stats").addClass("enableStats");
+        ///
+
+        $("#search").val("");
+    });
+
+});
 </script>
 <style>
   .disableStats {
