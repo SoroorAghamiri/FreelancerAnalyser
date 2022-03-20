@@ -21,6 +21,10 @@ import java.lang.*;
 /**
  * This controller contains an action to handle HTTP requests
  * to the application's home page.
+ * @author Haitham Abdel-Sala
+ * @author Soroor Aghimiri
+ * @author Asif Kazi Asif Tanim
+ * @author Bariq Ishtiaq
  */
 public class HomeController extends Controller{
 
@@ -51,7 +55,7 @@ public class HomeController extends Controller{
      */
     public CompletionStage<Result> getSearchTerm(String query) {
         return  new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + query)
-        .thenApply(result -> ok(Readability.processReadability(result)));
+        .thenApply(result -> ok(Readability.processReadability(result.asJson())));
     }
 
     /**
@@ -77,6 +81,7 @@ public class HomeController extends Controller{
 
     /**
      * Gets the 10 latest projects related to a skill
+     * @author Soroor
      * @param skill_name the skill selected in the main page
      * @return skill view, displaying 10 latest projects
      */
@@ -93,7 +98,7 @@ public class HomeController extends Controller{
     /**
      * Action method calls the stat view and renders the stats page with a global result for latest 250 projects
      * @author Haitham Abdel-Salam
-     * @Param query search term query
+     * @param query Search term query
      * @return CompletionStage<Result> value of the latest 250 project with query term
      */
     public CompletionStage<Result> getWordStats(String query)
@@ -133,6 +138,10 @@ public class HomeController extends Controller{
         return result;
     }
 
+    /**
+     * @author Haitham Abdel-Salam
+     * @return not found when status is 404
+     */
     public Result getSingleProjectStatsNotFound()
     {
         return notFound("project not found! id is missing...");

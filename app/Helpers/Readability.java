@@ -27,14 +27,12 @@ public class Readability {
      * @param WSResponse from API response
      * @return JsonNode by appending FRI & FKGL score
      */
-	public static JsonNode processReadability(WSResponse ws) {
-		JsonNode jsonNode = ws.asJson();
-    	JsonNode projectJsonNode = ws.asJson().get("result").get("projects");
+	public static JsonNode processReadability(JsonNode jsonNode) {
     	
     	AllProjects projects = Utils.convertNodeToAllProjects(jsonNode);
         List<String> combinedStream = Stream.of(projects.getDescriptions())
                 .flatMap(Collection::stream).collect(toList());
-    	
+
     	float FREI = 0;
     	float FKGL = 0;
     	
@@ -132,8 +130,7 @@ public class Readability {
      * @param String of preview_description
      * @return int count number of sentence from a given string
      */
-    private static int findNumberOfSentence(String input)
-    {
+    private static int findNumberOfSentence(String input){
         int len=0;     
         if(input.trim().length()==0)
         {

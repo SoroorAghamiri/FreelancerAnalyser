@@ -7,9 +7,9 @@ package model;
  * holds the name of the skills related to each project.
  * @author Soroor
  */
-public class Jobs_For_Project {
+public class JobsForProject {
     public String name;
-    public Jobs_For_Project(String name){
+    public JobsForProject(String name){
         this.name = name;
     }
 

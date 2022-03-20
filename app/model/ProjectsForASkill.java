@@ -13,13 +13,13 @@ import java.util.List;
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Projects_For_A_Skill {
+public class ProjectsForASkill {
     public Integer owner_id;
     public String title;
     public String type;
-    public List<Jobs_For_Project> jobs;
+    public List<JobsForProject> jobs;
 
-    public Projects_For_A_Skill(Integer ownerID, String title, String type, List<Jobs_For_Project> jobs){
+    public ProjectsForASkill(Integer ownerID, String title, String type, List<JobsForProject> jobs){
         this.owner_id = ownerID;
         this.title = title;
         this.type = type;
