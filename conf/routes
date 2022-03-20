@@ -9,7 +9,8 @@ GET     /owner-details/:owner_id    controllers.HomeController.getOwnerDetails(o
 GET     /owner-profile/:owner_id    controllers.HomeController.getOwnerView(owner_id: String)
 GET     /skills/:skill_name   controllers.HomeController.getSkillSearch(skill_name: String)
 GET     /stats/:query               controllers.HomeController.getWordStats(query: String)
-GET     /stats/single/:project_id   controllers.HomeController.getSingleProjectStats(project_id: Integer)
+GET     /stats/single/:project_id   controllers.HomeController.getSingleProjectStats(project_id: String)
+GET     /stats/single/              controllers.HomeController.getSingleProjectStatsNotFound()
 GET     /readablity/:description    controllers.HomeController.readablity(description: String)
 
 # Map static resources from the /public folder to the /assets URL path
