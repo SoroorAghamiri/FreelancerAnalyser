@@ -1,10 +1,11 @@
 package models;
 
+import akka.event.Logging;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import model.Jobs_For_Project;
-import model.Projects_For_A_Skill;
+import model.JobsForProject;
+import model.ProjectsForASkill;
 import Helpers.Skills;
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Tests the parser in the <code>Skills</code> and the <code>Projects_For_A_Skill</code> and <code>Jobs_For_Project</code>
+ * Tests the parser in the <code>Skills</code> and the <code>ProjectsForASkill</code> and <code>JobsForProject</code>
  * objects and their methods.
  * @author Soroor
  */
@@ -60,12 +61,12 @@ public class SkillsTest {
 
     @Test
     public void projectsForASkillTest(){
-        List<Jobs_For_Project> testjobs = new ArrayList<>();
-        Jobs_For_Project test1 = new Jobs_For_Project("test1");
-        Jobs_For_Project test2 = new Jobs_For_Project("test2");
+        List<JobsForProject> testjobs = new ArrayList<>();
+        JobsForProject test1 = new JobsForProject("test1");
+        JobsForProject test2 = new JobsForProject("test2");
         testjobs.add(test1);
         testjobs.add(test2);
-        Projects_For_A_Skill testcase = new Projects_For_A_Skill(1234 , "title" , "type" , testjobs);
+        ProjectsForASkill testcase = new ProjectsForASkill(1234 , "title" , "type" , testjobs);
         Assert.assertTrue(testcase.getOwnerId().equals("Owner_Id: 1234"));
         Assert.assertTrue(testcase.getTitle().equals(" Title: title"));
         Assert.assertTrue(testcase.getType().equals(" Type: type"));
