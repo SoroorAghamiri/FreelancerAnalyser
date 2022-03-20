@@ -42,10 +42,9 @@
     $("#result").append('<div class="mt-5"></div>');
     $("#result").append('<label class="fw-bold">Search terms: '+$("#search").val() + "</label>");
     $("#result").append(' : <span>Flesh Reading Ease Index: '+data['score']['avgFREI']+'</span>');
-    $("#result").append(' <span>FKGL: '+data['score']['avgFKGL']+'</span>');
+    $("#result").append(' <span>FKGL: '+data['score']['avgFKGL']+'</span> <br><a href =query id="statsLink">Global Stats</a>');
 
     //Word stats parsing
-    $("#result").append('<br><a href =query id="statsLink">Global Stats</a>');
 
         (function() {
         var newId = "statsLink" + statsId
