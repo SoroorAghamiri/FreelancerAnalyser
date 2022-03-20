@@ -1,5 +1,9 @@
 package Helpers;
 
+/**
+ * Enum class for API url string
+ * @author Kazi Asif Tanim
+ */
 public enum FreelanceAPI {
     BASE_URL("https://www.freelancer.com"),
     SEARCH_TERM("/api/projects/0.1/projects/active/?limit=10&job_details=true&full_description=true&query="),
@@ -8,11 +12,21 @@ public enum FreelanceAPI {
     PROJECT_BY_ID("/api/projects/0.1/projects/");
 
     private String url;
-    
+
+    /**
+     * Enum constructor
+     * @param String api URL
+     * @author Kazi Asif Tanim
+     */
     FreelanceAPI(String apiUrl) {
         this.url = apiUrl;
     }
- 
+
+    /**
+     * Enum constructor
+     * @author Kazi Asif Tanim
+     * @return String of URL
+     */
     public String getUrl() {
         return url;
     }
