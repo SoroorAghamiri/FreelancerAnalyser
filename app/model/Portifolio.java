@@ -9,7 +9,7 @@ public class Portifolio {
 
     public Portifolio(String title, String desc) {
         this.title = title;
-        Desc = desc;
+        this.Desc = desc;
     }
 
     public String getTitle() {
@@ -25,6 +25,6 @@ public class Portifolio {
     }
 
     public void setDesc(String desc) {
-        Desc = desc;
+        this.Desc = desc;
     }
 }
