@@ -1,24 +1,20 @@
 package controllers;
 
+import Helpers.FreelanceAPI;
+import Helpers.Readability;
+import Helpers.Skills;
+import Helpers.WordStat;
 import com.fasterxml.jackson.databind.JsonNode;
 import play.mvc.*;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
+import java.security.PublicKey;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 import javax.inject.Inject;
-import model.*;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.typesafe.config.Config;
 import java.lang.*;
 
@@ -50,7 +46,7 @@ public class HomeController extends Controller{
     /**
      * Readability class to handale readability calculations
      * @author Kazi Asif Tanim
-     * @param String of search query
+     * @param query of search query
      * @return returns a CompletionStage<Result> value of the fetch Freelancer.com API request
      */
     public CompletionStage<Result> getSearchTerm(String query) {
@@ -61,7 +57,7 @@ public class HomeController extends Controller{
     /**
      * Readability class to handale one readability calculations
      * @author Kazi Asif Tanim
-     * @param String of preview_description
+     * @param description of preview_description
      * @return returns a CompletionStage<Result> value of FKGL & FRI score
      */
     public CompletableFuture<Result> readablity(String description) {
@@ -84,7 +80,6 @@ public class HomeController extends Controller{
      * @param skill_name the skill selected in the main page
      * @return skill view, displaying 10 latest projects
      */
-
     public CompletionStage<Result> getSkillSearch(String skill_name) {
         CompletionStage<Result> result = new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
                 .thenApply(success ->{
@@ -95,7 +90,12 @@ public class HomeController extends Controller{
         return result;
     }
 
-
+    /**
+     * Action method calls the stat view and renders the stats page with a global result for latest 250 projects
+     * @author Haitham Abdel-Salam
+     * @Param query search term query
+     * @return CompletionStage<Result> value of the latest 250 project with query term
+     */
     public CompletionStage<Result> getWordStats(String query)
     {
          CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
@@ -110,18 +110,32 @@ public class HomeController extends Controller{
          return result;
     }
 
-    public CompletionStage<Result> getSingleProjectStats(Integer id)
+    /**
+     * Action method calls the stat view and renders the stats page with a single project stats result
+     * @author Haitham Abdel-Salam
+     * @param id project id
+     * @return CompletionStage<Result> value of a single project
+     */
+    public CompletionStage<Result> getSingleProjectStats(String id)
     {
         CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
                 getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.PROJECT_BY_ID.getUrl() + id);
 
         CompletionStage<Result> result = response.thenApply(res ->{
+            if(res.getStatus() == 404)
+                return notFound("project not found!");
             JsonNode node = res.asJson();
+
             return ok(views.html.stats.render(WordStat.processProjectStats(node),
-                    "Single project "+id.toString()+" Stats"));
+                    "Single project "+id+" Stats"));
         });
 
         return result;
+    }
+
+    public Result getSingleProjectStatsNotFound()
+    {
+        return notFound("project not found! id is missing...");
     }
 
     /**
