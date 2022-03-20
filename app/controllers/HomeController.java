@@ -51,7 +51,7 @@ public class HomeController extends Controller{
      */
     public CompletionStage<Result> getSearchTerm(String query) {
         return  new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + query)
-        .thenApply(result -> ok(Readability.processReadability(result)));
+        .thenApply(result -> ok(Readability.processReadability(result.asJson())));
     }
 
     /**
