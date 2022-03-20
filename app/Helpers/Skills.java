@@ -1,4 +1,4 @@
-package model;
+package Helpers;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import model.Jobs_For_Project;
-import model.Projects_For_A_Skill;
+import model.JobsForProject;
+import model.ProjectsForASkill;
 import scala.util.parsing.json.JSONArray;
 import scala.util.parsing.json.JSONArray$;
 

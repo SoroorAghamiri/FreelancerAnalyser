@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import model.JobsForProject;
 import model.ProjectsForASkill;
-import model.Skills;
+import Helpers.Skills;
 import org.junit.Assert;
 import org.junit.Test;
 

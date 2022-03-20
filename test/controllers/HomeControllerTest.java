@@ -43,6 +43,10 @@ public class HomeControllerTest extends WithApplication {
     @Inject
     Application application;
 
+    /**
+     * setting up testing application before each test
+     * @author Haitham Abdel-Salam
+     */
     @Before
     public void setup() {
         Module testModule =
@@ -62,6 +66,10 @@ public class HomeControllerTest extends WithApplication {
     }
 
 
+    /**
+     * stops application after each test
+     * @author Haitham Abdel-Salam
+     */
     @After
     public void teardown() {
         Helpers.stop(application);
@@ -120,6 +128,10 @@ public class HomeControllerTest extends WithApplication {
         assertEquals(NOT_FOUND, result.status());
     }
 
+    /**
+     * Tests get skill search from a get request
+     * @author soroor
+     */
     @Test
     public void testGetSkillSearch(){
     	Call action = routes.HomeController.getSkillSearch("Java");
