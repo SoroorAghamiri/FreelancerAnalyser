@@ -86,7 +86,7 @@ public class SingleProjectWordStatsTest {
 
     /**
      * Tests conversion of Json node to project mocel
-     * @Haitham Abdel-Salam
+     * @author Haitham Abdel-Salam
      * @throws JsonParseException
      * @throws IOException
      */

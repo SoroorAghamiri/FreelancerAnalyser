@@ -18,7 +18,8 @@ public class FreelancerAPIService extends Controller implements WSBodyReadables,
 
     /**
      * This is a parametarized constractor to pass dependancies
-     * @param WSClient & Config object to pass dependencies from controller
+     * @param ws WSClient to pass dependencies from controller
+     * @param config Config object to pass dependencies from controller
      * @author Kazi Asif Tanim
      */
     @Inject
@@ -29,8 +30,8 @@ public class FreelancerAPIService extends Controller implements WSBodyReadables,
 
     /**
      * This method call's Freelancer.com API
-     * @param String URL of the API
-     * @return a CompletionStage<WSResponse> response to controller
+     * @param url string URL of the API
+     * @return a CompletionStage WSResponse response to controller
      * @author Kazi Asif Tanim
      */
     public CompletionStage<WSResponse> getAPIResult(String url){

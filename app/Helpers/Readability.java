@@ -23,9 +23,9 @@ import play.libs.ws.WSResponse;
 public class Readability {
 	
 	/**
-     * Process WSResponse and calculate FRI & FKGL and return a JsonNode ading the score value
-     * @param WSResponse from API response
-     * @return JsonNode by appending FRI & FKGL score
+     * Process WSResponse and calculate FRI and FKGL and return a JsonNode ading the score value
+     * @param  jsonNode WSResponse from API response
+     * @return JsonNode by appending FRI and FKGL score
      */
 	public static JsonNode processReadability(JsonNode jsonNode) {
     	
@@ -58,9 +58,9 @@ public class Readability {
 	}
 	
 	/**
-     * Process a given String and calculate FRI & FKGL
-     * @param String of preview_description
-     * @return a String by appending FRI & FKGL score and Education level to read
+     * Process a given String and calculate FRI amd FKGL
+     * @param description string of preview_description
+     * @return a String by appending FRI and FKGL score and Education level to read
      */
 	public static String processReadabilityForSingleProject(String description) {
 		int numberOfSentence = Readability.findNumberOfSentence(description);
@@ -98,7 +98,7 @@ public class Readability {
 	
 	/**
      * Method to count syllabales from a given string
-     * @param String of preview_description
+     * @param s string of preview_description
      * @return int count number of syllables from a given string
      */
 	private static int countSyllables(String s) {
@@ -127,7 +127,7 @@ public class Readability {
 
 	/**
      * Method to count sentence from a string
-     * @param String of preview_description
+     * @param input string of preview_description
      * @return int count number of sentence from a given string
      */
     private static int findNumberOfSentence(String input){
@@ -155,7 +155,9 @@ public class Readability {
     
     /**
      * Method to calculate Flesch Readability Index
-     * @param int number of sentence, int number of word, int number of sullable
+     * @param numberOfSentence number of sentence, int number of word, int number of sullable
+     * @param numberOfWord
+     * @param numberOfSyllable
      * @return Flaot value of Flesch Redability Index value
      */
     private static float calculateFleschReadabilityIndex(int numberOfSentence, int numberOfWord, int numberOfSyllable) {
@@ -164,7 +166,9 @@ public class Readability {
     
     /**
      * Method to calculate Flesch-Kincaid Grade Level
-     * @param int number of sentence, int number of word, int number of sullable
+     * @param numberOfSentence number of sentence, int number of word, int number of sullable
+     * @param numberOfWord
+     * @param numberOfSyllable
      * @return Flaot value of Flesch-Kincaid Grade Level value
      */
     private static float calculateFKGL(int numberOfSentence, int numberOfWord, int numberOfSyllable) {

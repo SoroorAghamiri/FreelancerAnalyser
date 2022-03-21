@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 /**
  * Model class defines the structure of all project
- * @Author Haitham Abdel-Salam
+ * @author Haitham Abdel-Salam
  */
 public class AllProjects {
 

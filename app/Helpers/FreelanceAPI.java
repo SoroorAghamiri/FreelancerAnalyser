@@ -15,7 +15,7 @@ public enum FreelanceAPI {
 
     /**
      * Enum constructor
-     * @param String api URL
+     * @param apiUrl api URL
      * @author Kazi Asif Tanim
      */
     FreelanceAPI(String apiUrl) {

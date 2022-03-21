@@ -36,7 +36,7 @@ public class WordStat {
 
     /**
      * Processes projects returned in JSON format and produces the words statistics for all projects
-     * @Author Haitham Abdel-Salam
+     * @author Haitham Abdel-Salam
      * @param jsonNode json data to be processed
      * @return  map with Unique word as a key and frequency as a value.
      */
@@ -50,7 +50,7 @@ public class WordStat {
 
     /**
      * Processes word statistics for a single project
-     * @Author Haitham Abdel-Salam
+     * @author Haitham Abdel-Salam
      * @param jsonNode json data to be processed
      * @return map with Unique word as a key and frequency as a value.
      */
@@ -63,9 +63,9 @@ public class WordStat {
 
     /**
      * Processes a collection of strings and gets unique words and its frequencies
-     * @Author Haitham Abdel-Salam
+     * @author Haitham Abdel-Salam
      * @param combinedStream List of all strings to be processed
-     * @return @return map with Unique word as a key and frequency as a value.
+     * @return map with Unique word as a key and frequency as a value.
      */
     public static  Map<String, Integer> processWords(List<String> combinedStream)
     {

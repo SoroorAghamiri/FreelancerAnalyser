@@ -51,7 +51,7 @@ public class HomeController extends Controller{
      * Readability class to handale readability calculations
      * @author Kazi Asif Tanim
      * @param query of search query
-     * @return returns a CompletionStage<Result> value of the fetch Freelancer.com API request
+     * @return returns a CompletionStage Result value of the fetch Freelancer.com API request
      */
     public CompletionStage<Result> getSearchTerm(String query) {
         return  new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + query)
@@ -62,7 +62,7 @@ public class HomeController extends Controller{
      * Readability class to handale one readability calculations
      * @author Kazi Asif Tanim
      * @param description of preview_description
-     * @return returns a CompletionStage<Result> value of FKGL & FRI score
+     * @return returns a CompletionStage Result value of FKGL and FRI score
      */
     public CompletableFuture<Result> readablity(String description) {
     	return CompletableFuture.completedFuture(ok("Preview Description: " + description + "\n" + Readability.processReadabilityForSingleProject(description)));
@@ -99,7 +99,7 @@ public class HomeController extends Controller{
      * Action method calls the stat view and renders the stats page with a global result for latest 250 projects
      * @author Haitham Abdel-Salam
      * @param query Search term query
-     * @return CompletionStage<Result> value of the latest 250 project with query term
+     * @return CompletionStage Result value of the latest 250 project with query term
      */
     public CompletionStage<Result> getWordStats(String query)
     {
@@ -119,7 +119,7 @@ public class HomeController extends Controller{
      * Action method calls the stat view and renders the stats page with a single project stats result
      * @author Haitham Abdel-Salam
      * @param id project id
-     * @return CompletionStage<Result> value of a single project
+     * @return CompletionStage Result value of a single project
      */
     public CompletionStage<Result> getSingleProjectStats(String id)
     {

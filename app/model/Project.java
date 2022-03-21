@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 /**
  * Model class defines the structure of a single project
- * @Haitham Abdel-Salam
+ * @author Haitham Abdel-Salam
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Project {

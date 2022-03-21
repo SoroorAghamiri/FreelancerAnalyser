@@ -23,8 +23,8 @@ public class SkillsTest {
     /**
      * Creates a test jason file, stores it in a list of strings, sends the list of string and the parseToSkill method
      * to compareStringLists method. The result must be asserted to true.
-     * @throws JsonParseException
-     * @throws IOException
+     * @throws JsonParseException if the parsing faces any problem
+     * @throws IOException if the json file given as input failed or interpreted
      */
     @Test
     public void parseToSkillsTest() throws JsonParseException, IOException {

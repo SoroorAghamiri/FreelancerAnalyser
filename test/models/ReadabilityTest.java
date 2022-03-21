@@ -3,7 +3,7 @@ package models;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import controllers.routes;
+
 import junit.framework.TestCase;
 import Helpers.Readability;
 import org.mockito.Mockito;
