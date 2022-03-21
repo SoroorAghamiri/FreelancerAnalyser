@@ -37,16 +37,16 @@ public class Profile {
 
     /**
      *
-     * @param name
-     * @param city
-     * @param country
-     * @param role
-     * @param verified
-     * @param paymentMethod
-     * @param jobcount
-     * @param recommendedby
-     * @param registration_date
-     * @param portifolios
+     * @param name name
+     * @param city city
+     * @param country country
+     * @param role role
+     * @param verified is verified
+     * @param paymentMethod payment method
+     * @param jobcount jobcount
+     * @param recommendedby recommended by
+     * @param registration_date data of registration
+     * @param portifolios portflio
      * all are the constructor initalization of the variable
      */
     public Profile(String name, String city, String country, String role, boolean verified, String paymentMethod, int jobcount, int recommendedby, long registration_date, List<Portifolio> portifolios) {
@@ -63,7 +63,6 @@ public class Profile {
     }
 
     /**
-     *
      * @return name
      */
     public String getName() {

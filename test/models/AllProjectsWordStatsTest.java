@@ -39,7 +39,7 @@ public class AllProjectsWordStatsTest {
     /**
      * Initializes the json node before each test to read mock json from file
      * @author Haitham Abdel-Salam
-     * @throws Exception
+     * @throws Exception general exception
      */
     @Before
     public void init() throws Exception {
@@ -54,11 +54,9 @@ public class AllProjectsWordStatsTest {
     /**
      * Checks of processing allProject model is valid and not empty
      * @author Haitham Abdel-Salam
-     * @throws JsonParseException
-     * @throws IOException
      */
     @Test
-    public void processAllProjectsStatsTestValid() throws JsonParseException, IOException {
+    public void processAllProjectsStatsTestValid() {
 
         assertTrue("The returned map should not be empty", Collections.emptyList() !=
                 WordStat.processAllProjectsStats(node));
@@ -67,11 +65,9 @@ public class AllProjectsWordStatsTest {
     /**
      * Checks of processing allproject model returns an empty map
      * @author Haitham Abdel-Salam
-     * @throws JsonParseException
-     * @throws IOException
      */
     @Test
-    public void processAllProjectsStatsTestEmpty() throws JsonParseException, IOException {
+    public void processAllProjectsStatsTestEmpty(){
 
         assertFalse("The returned map should not be empty", Collections.emptyList() ==
                 WordStat.processAllProjectsStats(node));
@@ -79,12 +75,10 @@ public class AllProjectsWordStatsTest {
 
     /**
      * Tests proccessing words as streams
-     * @author
-     * @throws JsonParseException
-     * @throws IOException
+     * @author Haitham Abdel-Salam
      */
     @Test
-    public void processWordsTest() throws JsonParseException, IOException {
+    public void processWordsTest(){
 
         List<String> words = new ArrayList<String>();
         words.add("John");
@@ -101,11 +95,9 @@ public class AllProjectsWordStatsTest {
     /**
      * Tests converting json node to allProjects model
      * @author Haitham Abdel-Salam
-     * @throws JsonParseException
-     * @throws IOException
      */
     @Test
-    public void convertJsonNodeToAllProjectsTest() throws JsonParseException, IOException {
+    public void convertJsonNodeToAllProjectsTest(){
 
         AllProjects  projects = Utils.convertNodeToAllProjects(node);
 

@@ -156,8 +156,9 @@ public class Readability {
     /**
      * Method to calculate Flesch Readability Index
      * @param numberOfSentence number of sentence, int number of word, int number of sullable
-     * @param numberOfWord
-     * @param numberOfSyllable
+     * @param numberOfWord number of words
+     * @param numberOfSyllable Syllables
+     * @author Asif
      * @return Flaot value of Flesch Redability Index value
      */
     private static float calculateFleschReadabilityIndex(int numberOfSentence, int numberOfWord, int numberOfSyllable) {
@@ -167,8 +168,9 @@ public class Readability {
     /**
      * Method to calculate Flesch-Kincaid Grade Level
      * @param numberOfSentence number of sentence, int number of word, int number of sullable
-     * @param numberOfWord
-     * @param numberOfSyllable
+     * @param numberOfWord number of words
+     * @param numberOfSyllable Syllables
+     * @author Asif
      * @return Flaot value of Flesch-Kincaid Grade Level value
      */
     private static float calculateFKGL(int numberOfSentence, int numberOfWord, int numberOfSyllable) {

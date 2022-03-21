@@ -11,7 +11,14 @@ import java.util.stream.Collectors;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Project {
+    /**
+     * Project title
+     */
     public String title;
+
+    /**
+     * Project description
+     */
     public String description;
 
     public Project(){}
