@@ -9,8 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class Portifoliotest {
+    /**
+     * To Test the function if the portfolio is empty
+     * @author Bariq
+     */
+    @Test
+    public void TestEmptyProfile(){
+        Portifolio portifolio = new Portifolio();
+        assertFalse(portifolio==null);
+
+    }
     @Test
     public void testNoEmptyPortifolio(){
         Portifolio portifolio = new Portifolio("titlr","desc");
