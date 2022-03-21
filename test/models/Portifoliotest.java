@@ -17,7 +17,7 @@ public class Portifoliotest {
      * @author Bariq
      */
     @Test
-    public void TestEmptyProfile(){
+    public void testEmptyPortifolio(){
         Portifolio portifolio = new Portifolio();
         assertFalse(portifolio==null);
 
