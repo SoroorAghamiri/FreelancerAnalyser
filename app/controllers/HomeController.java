@@ -69,10 +69,10 @@ public class HomeController extends Controller{
     }
 
     /**
-     *
-     *
+     * @author Bariq
      * this return the owner details by the owner_id
-     * @return
+     * @param owner_id owner id
+     * @return CompletionStage with result
      */
     public CompletionStage<Result> getOwnerDetails(String owner_id){
         return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.OWNER_PROFILE.getUrl() + owner_id)
@@ -148,9 +148,10 @@ public class HomeController extends Controller{
     }
 
     /**
-     *
      * render ownerView Page and load the data return from the api
-     *
+     * @param owner_id owner id
+     * @author Bariq
+     * @return result
      */
     public Result getOwnerView(String owner_id){
         return ok(views.html.ownerProfile.render());

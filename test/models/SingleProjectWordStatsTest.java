@@ -30,7 +30,7 @@ public class SingleProjectWordStatsTest {
     /**
      * initializes json node before each test by read mock json from file
      * @author Haitham Abdel-Salam
-     * @throws Exception
+     * @throws Exception  Exception
      */
     @Before
     public void init() throws Exception {
@@ -44,12 +44,10 @@ public class SingleProjectWordStatsTest {
 
     /**
      * Tests if processing projects map returns a map with data
-     * @author
-     * @throws JsonParseException
-     * @throws IOException
+     * @author Haitham Abdel-Salam
      */
     @Test
-    public void processSingleProjectsStatsTestValid() throws JsonParseException, IOException {
+    public void processSingleProjectsStatsTestValid(){
 
         assertTrue(Collections.emptyList() != WordStat.processProjectStats(node));
     }
@@ -57,11 +55,9 @@ public class SingleProjectWordStatsTest {
     /**
      * Tests if processing projects map returns map with data
      * @author Haitham abdel-Salam
-     * @throws JsonParseException
-     * @throws IOException
      */
     @Test
-    public void processSingleProjectsStatsTestEmpty() throws JsonParseException, IOException {
+    public void processSingleProjectsStatsTestEmpty(){
 
         assertFalse(Collections.emptyList() == WordStat.processProjectStats(node));
     }
@@ -69,11 +65,9 @@ public class SingleProjectWordStatsTest {
     /**
      * Tests creating and usage of allprojects model
      * @author Haitham Abdel-Salam
-     * @throws JsonParseException
-     * @throws IOException
      */
     @Test
-    public void processAllProjectsStatsTestHasValues() throws JsonParseException, IOException {
+    public void processAllProjectsStatsTestHasValues(){
 
         Project project1 = new Project("test project 1", "Description of project 1");
         Project project2 = new Project("test project 2", "Description of project 2");
@@ -87,11 +81,9 @@ public class SingleProjectWordStatsTest {
     /**
      * Tests conversion of Json node to project mocel
      * @author Haitham Abdel-Salam
-     * @throws JsonParseException
-     * @throws IOException
      */
     @Test
-    public void convertsJsonNodeToProjectTest() throws JsonParseException, IOException {
+    public void convertsJsonNodeToProjectTest(){
 
         Project project = Utils.convertNodeToProject(node);
         assertTrue(project!=null);

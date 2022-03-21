@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
  */
 public class AllProjects {
 
+    /**
+     * List of all projects
+     */
     private List<Project> projects;
 
 

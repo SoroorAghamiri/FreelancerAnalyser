@@ -134,6 +134,7 @@ public class HomeControllerTest extends WithApplication {
     /**
      * Test method for readability in HomeController
      * @author Kazi Asif Tanim
+     * @exception UnsupportedEncodingException Exception unsupported encoding
      */
     @Test
     public void testReadablity() throws UnsupportedEncodingException {
@@ -145,6 +146,7 @@ public class HomeControllerTest extends WithApplication {
     /**
      * Test method for readability invalid response
      * @author Kazi Asif Tanim
+     * @exception UnsupportedEncodingException Unsupported Encoding Exception
      */
     @Test
     public void testReadablityInvalid() throws UnsupportedEncodingException {
