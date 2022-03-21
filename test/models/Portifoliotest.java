@@ -14,7 +14,7 @@ import static org.junit.Assert.assertFalse;
 public class Portifoliotest {
     /**
      * To Test the function if the portfolio is empty
-     * @author Bariq
+     * @author Bariq Ishtiaq Mohammed
      */
     @Test
     public void TestEmptyProfile(){
