@@ -1,5 +1,6 @@
 package actors;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.typesafe.config.Config;
 import play.libs.ws.WSClient;
 
@@ -15,6 +16,16 @@ public class ServiceActorProtocol {
             this.query = query;
             this.ws = ws;
             this.config = config;
+
+        }
+    }
+
+    public static class JsonMessage
+    {
+        public final JsonNode jsonNode;
+
+        public JsonMessage(JsonNode jsonNode) {
+            this.jsonNode = jsonNode;
 
         }
     }

@@ -6,15 +6,16 @@ import Helpers.Skills;
 import Helpers.WordStat;
 import actors.ServiceActor;
 import actors.ServiceActorProtocol;
+import actors.WordStatsActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.Props;
 import com.fasterxml.jackson.databind.JsonNode;
 import play.mvc.*;
 import scala.compat.java8.FutureConverters;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
 
-import java.security.PublicKey;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -37,13 +38,15 @@ public class HomeController extends Controller{
 
     private final WSClient ws;
     private final Config config;
-    final ActorRef serviceActor;
+    final ActorRef wordStatsActor;
+    final ActorRef ServiceActor;
 
     @Inject
-    public HomeController(WSClient ws,Config config, ActorSystem system) {
+    public HomeController(WSClient ws, Config config, ActorSystem system, ActorRef serviceActor) {
         this.ws = ws;
         this.config = config;
-        serviceActor = system.actorOf(ServiceActor.getProps());
+        ServiceActor = system.actorOf(actors.ServiceActor.getProps());
+        wordStatsActor = system.actorOf(Props.create(WordStatsActor.class, new WordStatsActor(ws, config, serviceActor)));
     }
 
     /**
@@ -114,18 +117,24 @@ public class HomeController extends Controller{
      * @param query Search term query
      * @return CompletionStage Result value of the latest 250 project with query term
      */
+//    public CompletionStage<Result> getWordStats(String query)
+//    {
+//         CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
+//                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.WORD_STATS.getUrl() + query);
+//
+//         CompletionStage<Result> result = response.thenApply(res ->{
+//             JsonNode node = res.asJson();
+//             return ok(views.html.stats.render(WordStat.processAllProjectsStats(node),
+//                     "Word stats for latest 250 projects for "+query+" term"));
+//         });
+//
+//         return result;
+//    }
+
     public CompletionStage<Result> getWordStats(String query)
     {
-         CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
-                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.WORD_STATS.getUrl() + query);
-
-         CompletionStage<Result> result = response.thenApply(res ->{
-             JsonNode node = res.asJson();
-             return ok(views.html.stats.render(WordStat.processAllProjectsStats(node),
-                     "Word stats for latest 250 projects for "+query+" term"));
-         });
-
-         return result;
+        return FutureConverters.toJava(ask(wordStatsActor, new ServiceActorProtocol.RequestMessage(query, ws, config), 1000))
+                   .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
     }
 
     /**
@@ -170,9 +179,9 @@ public class HomeController extends Controller{
         return ok(views.html.ownerProfile.render());
     }
 
-    public CompletionStage<Result> requestApi(String message) {
-        return FutureConverters.toJava(ask(serviceActor,
-                        new ServiceActorProtocol.RequestMessage(message, ws, config), 1000))
-                .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
-    }
+   // public CompletionStage<Result> requestApi(String message) {
+      //  return FutureConverters.toJava(ask(serviceActor,
+          //              new ServiceActorProtocol.RequestMessage(message, ws, config), 1000))
+             //   .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
+    //}
 }

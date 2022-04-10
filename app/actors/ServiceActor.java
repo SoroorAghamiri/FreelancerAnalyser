@@ -16,6 +16,7 @@ import java.util.concurrent.CompletionStage;
 
 public class ServiceActor extends AbstractActor {
 
+
     public static Props getProps() {
         return Props.create(ServiceActor.class);
     }
