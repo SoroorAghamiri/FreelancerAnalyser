@@ -4,8 +4,13 @@ import Helpers.FreelanceAPI;
 import Helpers.Readability;
 import Helpers.Skills;
 import Helpers.WordStat;
+import actors.ServiceActor;
+import actors.ServiceActorProtocol;
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import com.fasterxml.jackson.databind.JsonNode;
 import play.mvc.*;
+import scala.compat.java8.FutureConverters;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
 
@@ -17,6 +22,8 @@ import javax.inject.Inject;
 
 import com.typesafe.config.Config;
 import java.lang.*;
+
+import static akka.pattern.Patterns.ask;
 
 /**
  * This controller contains an action to handle HTTP requests
@@ -30,11 +37,13 @@ public class HomeController extends Controller{
 
     private final WSClient ws;
     private final Config config;
+    final ActorRef serviceActor;
 
     @Inject
-    public HomeController(WSClient ws,Config config) {
+    public HomeController(WSClient ws,Config config, ActorSystem system) {
         this.ws = ws;
         this.config = config;
+        serviceActor = system.actorOf(ServiceActor.getProps());
     }
 
     /**
@@ -54,7 +63,8 @@ public class HomeController extends Controller{
      * @return returns a CompletionStage Result value of the fetch Freelancer.com API request
      */
     public CompletionStage<Result> getSearchTerm(String query) {
-        return  new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + query)
+        return  new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() +
+                        FreelanceAPI.SEARCH_TERM.getUrl() + query)
         .thenApply(result -> ok(Readability.processReadability(result.asJson())));
     }
 
@@ -65,7 +75,8 @@ public class HomeController extends Controller{
      * @return returns a CompletionStage Result value of FKGL and FRI score
      */
     public CompletableFuture<Result> readablity(String description) {
-    	return CompletableFuture.completedFuture(ok("Preview Description: " + description + "\n" + Readability.processReadabilityForSingleProject(description)));
+    	return CompletableFuture.completedFuture(ok("Preview Description: " +
+                description + "\n" + Readability.processReadabilityForSingleProject(description)));
     }
 
     /**
@@ -75,7 +86,8 @@ public class HomeController extends Controller{
      * @return CompletionStage with result
      */
     public CompletionStage<Result> getOwnerDetails(String owner_id){
-        return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.OWNER_PROFILE.getUrl() + owner_id)
+        return new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() +
+                        FreelanceAPI.OWNER_PROFILE.getUrl() + owner_id)
         .thenApply(result -> ok(result.asJson()));
     }
 
@@ -86,7 +98,8 @@ public class HomeController extends Controller{
      * @return skill view, displaying 10 latest projects
      */
     public CompletionStage<Result> getSkillSearch(String skill_name) {
-        CompletionStage<Result> result = new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
+        CompletionStage<Result> result = new FreelancerAPIService(ws, config)
+                .getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
                 .thenApply(success ->{
                     JsonNode received = success.asJson();
                     return ok(views.html.skills.render(new Skills().parseToSkills(received) , skill_name));
@@ -155,5 +168,11 @@ public class HomeController extends Controller{
      */
     public Result getOwnerView(String owner_id){
         return ok(views.html.ownerProfile.render());
+    }
+
+    public CompletionStage<Result> requestApi(String message) {
+        return FutureConverters.toJava(ask(serviceActor,
+                        new ServiceActorProtocol.RequestMessage(message, ws, config), 1000))
+                .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
     }
 }
