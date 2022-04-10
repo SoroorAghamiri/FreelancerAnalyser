@@ -39,14 +39,14 @@ public class HomeController extends Controller{
     private final WSClient ws;
     private final Config config;
     final ActorRef wordStatsActor;
-    final ActorRef ServiceActor;
+    final ActorRef serviceActor;
 
     @Inject
-    public HomeController(WSClient ws, Config config, ActorSystem system, ActorRef serviceActor) {
+    public HomeController(WSClient ws, Config config, ActorSystem system) {
         this.ws = ws;
         this.config = config;
-        ServiceActor = system.actorOf(actors.ServiceActor.getProps());
-        wordStatsActor = system.actorOf(Props.create(WordStatsActor.class, new WordStatsActor(ws, config, serviceActor)));
+        serviceActor = system.actorOf(actors.ServiceActor.getProps());
+        wordStatsActor = system.actorOf(Props.create(WordStatsActor.class,ws, config, serviceActor));
     }
 
     /**
