@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProjectsForASkill {
+public class  ProjectsForASkill {
     public Integer owner_id;
     public String title;
     public String type;

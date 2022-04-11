@@ -5,7 +5,7 @@ import Helpers.WordStat;
 import akka.actor.AbstractActor;
 import akka.actor.Props;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.sun.corba.se.impl.protocol.giopmsgheaders.RequestMessage;
+//import com.sun.corba.se.impl.protocol.giopmsgheaders.RequestMessage;
 import actors.ServiceActorProtocol.*;
 import play.libs.ws.WSResponse;
 import play.mvc.Result;
@@ -29,7 +29,7 @@ public class ServiceActor extends AbstractActor {
                         requestMessage -> {
                             CompletionStage<WSResponse> response = new FreelancerAPIService(requestMessage.ws, requestMessage.config)
                                     .getAPIResult(FreelanceAPI.BASE_URL.getUrl()
-                                    + FreelanceAPI.SEARCH_TERM.getUrl() + requestMessage.query);
+                                    + requestMessage.url.getUrl() + requestMessage.query);
 
                             CompletionStage<Object> result = response.thenApply(res-> res.asJson());
 

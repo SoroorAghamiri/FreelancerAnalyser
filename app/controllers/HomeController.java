@@ -6,6 +6,7 @@ import Helpers.Skills;
 import Helpers.WordStat;
 import actors.ServiceActor;
 import actors.ServiceActorProtocol;
+import actors.SkillActor;
 import actors.WordStatsActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -40,6 +41,7 @@ public class HomeController extends Controller{
     private final Config config;
     final ActorRef wordStatsActor;
     final ActorRef serviceActor;
+    final ActorRef skillActor;
 
     @Inject
     public HomeController(WSClient ws, Config config, ActorSystem system) {
@@ -47,6 +49,7 @@ public class HomeController extends Controller{
         this.config = config;
         serviceActor = system.actorOf(actors.ServiceActor.getProps());
         wordStatsActor = system.actorOf(Props.create(WordStatsActor.class,ws, config, serviceActor));
+        skillActor = system.actorOf(Props.create(SkillActor.class));
     }
 
     /**
@@ -101,14 +104,23 @@ public class HomeController extends Controller{
      * @return skill view, displaying 10 latest projects
      */
     public CompletionStage<Result> getSkillSearch(String skill_name) {
-        CompletionStage<Result> result = new FreelancerAPIService(ws, config)
-                .getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
-                .thenApply(success ->{
-                    JsonNode received = success.asJson();
-                    return ok(views.html.skills.render(new Skills().parseToSkills(received) , skill_name));
-                });
 
-        return result;
+//        CompletionStage<Result> result = new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
+//                .thenApply(success ->{
+//                    JsonNode received = success.asJson();
+//                    skillactor.tell(new SkillActor.RequestSkillProject(received));
+//                    return  ok(views.html.skills.render(skill_name));
+//                });
+        return FutureConverters.toJava(ask(
+                serviceActor , new ServiceActorProtocol.RequestMessage(skill_name , ws , config , FreelanceAPI.SEARCH_TERM
+                ),1000)).thenApply(success->{
+                    ask(skillActor, new ServiceActorProtocol.JsonMessage((JsonNode)success) , 1000);
+                    return ok(views.html.skills.render(result , skill_name))
+                }).thenApply(result->);
+
+        //new Skills().parseToSkills(received)
+        //return ok(views.html.skills.render(  , skill_name));
+//        return result;
     }
 
     /**
@@ -133,7 +145,7 @@ public class HomeController extends Controller{
 
     public CompletionStage<Result> getWordStats(String query)
     {
-        return FutureConverters.toJava(ask(wordStatsActor, new ServiceActorProtocol.RequestMessage(query, ws, config), 1000))
+        return FutureConverters.toJava(ask(wordStatsActor, new ServiceActorProtocol.RequestMessage(query, ws, config ,FreelanceAPI.SEARCH_TERM ), 1000))
                    .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
     }
 
