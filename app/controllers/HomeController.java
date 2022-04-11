@@ -45,8 +45,8 @@ public class HomeController extends Controller{
     public HomeController(WSClient ws, Config config, ActorSystem system) {
         this.ws = ws;
         this.config = config;
-        serviceActor = system.actorOf(actors.ServiceActor.getProps());
-        wordStatsActor = system.actorOf(Props.create(WordStatsActor.class,ws, config, serviceActor));
+        serviceActor = system.actorOf(Props.create(ServiceActor.class,ws, config));
+        wordStatsActor = system.actorOf(Props.create(WordStatsActor.class, serviceActor));
     }
 
     /**
@@ -133,7 +133,8 @@ public class HomeController extends Controller{
 
     public CompletionStage<Result> getWordStats(String query)
     {
-        return FutureConverters.toJava(ask(wordStatsActor, new ServiceActorProtocol.RequestMessage(query, ws, config), 1000))
+        return FutureConverters.toJava(ask(wordStatsActor,
+                        new ServiceActorProtocol.RequestMessage(query, FreelanceAPI.WORD_STATS), 1000))
                    .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
     }
 
@@ -179,9 +180,9 @@ public class HomeController extends Controller{
         return ok(views.html.ownerProfile.render());
     }
 
-   // public CompletionStage<Result> requestApi(String message) {
-      //  return FutureConverters.toJava(ask(serviceActor,
-          //              new ServiceActorProtocol.RequestMessage(message, ws, config), 1000))
-             //   .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
-    //}
+//    public CompletionStage<Result> requestApi(String message) {
+//        return FutureConverters.toJava(ask(serviceActor,
+//                        new ServiceActorProtocol.RequestMessage(message, FreelanceAPI.SEARCH_TERM), 1000))
+//                .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
+//    }
 }

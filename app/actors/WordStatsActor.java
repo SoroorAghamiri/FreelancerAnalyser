@@ -20,14 +20,10 @@ import java.util.stream.Stream;
 
 public class WordStatsActor extends AbstractActor {
 
-    private  WSClient ws;
-    private  Config config;
     private ActorRef serviceActor;
 
-    public WordStatsActor(WSClient ws, Config config, ActorRef serviceActor)
+    public WordStatsActor(ActorRef serviceActor)
     {
-        this.ws = ws;
-        this.config = config;
         this.serviceActor = serviceActor;
     }
 
