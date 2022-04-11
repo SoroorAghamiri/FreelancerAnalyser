@@ -12,11 +12,13 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import com.fasterxml.jackson.databind.JsonNode;
+import play.core.NamedThreadFactory;
 import play.mvc.*;
 import scala.compat.java8.FutureConverters;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -131,26 +133,16 @@ public class HomeController extends Controller{
      * @param query Search term query
      * @return CompletionStage Result value of the latest 250 project with query term
      */
-//    public CompletionStage<Result> getWordStats(String query)
-//    {
-//         CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
-//                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.WORD_STATS.getUrl() + query);
-//
-//         CompletionStage<Result> result = response.thenApply(res ->{
-//             JsonNode node = res.asJson();
-//             return ok(views.html.stats.render(WordStat.processAllProjectsStats(node),
-//                     "Word stats for latest 250 projects for "+query+" term"));
-//         });
-//
-//         return result;
-//    }
-
     public CompletionStage<Result> getWordStats(String query)
     {
         return FutureConverters.toJava(ask(wordStatsActor,
                         new ServiceActorProtocol.RequestMessage(query, FreelanceAPI.WORD_STATS), 1000))
         return FutureConverters.toJava(ask(wordStatsActor, new ServiceActorProtocol.RequestMessage(query, ws, config ,FreelanceAPI.SEARCH_TERM ), 1000))
                    .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
+                   .thenApply(response -> {
+                       Map<String, Integer> map = (Map<String, Integer>) response;
+                       return ok(views.html.stats.render(map, "Word stats for latest 250 projects for "+query+" term"));
+                   });
     }
 
     /**
@@ -161,19 +153,12 @@ public class HomeController extends Controller{
      */
     public CompletionStage<Result> getSingleProjectStats(String id)
     {
-        CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
-                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.PROJECT_BY_ID.getUrl() + id);
-
-        CompletionStage<Result> result = response.thenApply(res ->{
-            if(res.getStatus() == 404)
-                return notFound("project not found!");
-            JsonNode node = res.asJson();
-
-            return ok(views.html.stats.render(WordStat.processProjectStats(node),
-                    "Single project "+id+" Stats"));
-        });
-
-        return result;
+        return FutureConverters.toJava(ask(wordStatsActor,
+                        new ServiceActorProtocol.SingleProjectRequest(id, FreelanceAPI.PROJECT_BY_ID), 1000))
+                .thenApply(response -> {
+                    Map<String, Integer> map = (Map<String, Integer>) response;
+                    return ok(views.html.stats.render(map, "Single project "+id+" Stats"));
+                });
     }
 
     /**
