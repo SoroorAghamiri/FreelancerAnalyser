@@ -8,6 +8,8 @@ import com.typesafe.config.Config;
 import model.AllProjects;
 import model.Project;
 import play.libs.ws.WSClient;
+import scala.compat.java8.FutureConverters;
+
 import static akka.pattern.Patterns.ask;
 import static akka.pattern.Patterns.pipe;
 import static java.util.stream.Collectors.counting;
@@ -15,6 +17,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,11 +35,24 @@ public class WordStatsActor extends AbstractActor {
                 .match(
                         ServiceActorProtocol.RequestMessage.class,
                         msg -> {
-                            CompletableFuture<Object> fut =
-                                    (CompletableFuture<Object>) ask(serviceActor, msg, 1000);
+                            CompletionStage<Object> fut =
+                                    FutureConverters.toJava(ask(serviceActor, msg, 1000))
+                                            .thenApply(result ->{
+                                        return processAllProjectsStats((JsonNode) result);
+                                    });
 
-                            // the pipe pattern
-                            pipe(fut, getContext().dispatcher()).to(getSender());
+                            pipe(fut, getContext().dispatcher()).to(sender());
+                        })
+                .match(
+                        ServiceActorProtocol.SingleProjectRequest.class,
+                        msg -> {
+                            CompletionStage<Object> fut =
+                                    FutureConverters.toJava(ask(serviceActor, msg, 1000))
+                                            .thenApply(result ->{
+                                                return processProjectStats((JsonNode) result);
+                                            });
+
+                            pipe(fut, getContext().dispatcher()).to(sender());
                         })
                 .build();
     }

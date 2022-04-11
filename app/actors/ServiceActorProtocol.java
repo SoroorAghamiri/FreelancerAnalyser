@@ -19,6 +19,18 @@ public class ServiceActorProtocol {
         }
     }
 
+    public static class SingleProjectRequest
+    {
+        public final String id;
+        public final FreelanceAPI apiEndpoint;
+
+        public SingleProjectRequest(String id, FreelanceAPI apiEndpoint) {
+            this.id = id;
+            this.apiEndpoint = apiEndpoint;
+
+        }
+    }
+
     public static class JsonMessage
     {
         public final JsonNode jsonNode;
