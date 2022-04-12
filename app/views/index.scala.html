@@ -96,6 +96,21 @@ $("#go-button").click(function() {
 
 });
 </script>
+<script>
+    (function() {
+  $(function() {
+    var ws;
+    ws = new WebSocket($("body").data("ws-url"));
+    return ws.onmessage = function(event) {
+      var message;
+      message = JSON.parse(event.data);
+      return $('#time').append(message.time + "<br/>");
+    };
+  });
+
+}).call(this);
+</script>
+
 <style>
   .disableStats {
     pointer-events: none;
