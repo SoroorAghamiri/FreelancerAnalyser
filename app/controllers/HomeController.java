@@ -18,6 +18,7 @@ import scala.compat.java8.FutureConverters;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -54,6 +55,7 @@ public class HomeController extends Controller{
         serviceActor = system.actorOf(actors.ServiceActor.getProps());
         wordStatsActor = system.actorOf(Props.create(WordStatsActor.class,ws, config, serviceActor));
         skillActor = system.actorOf(Props.create(SkillActor.class));
+        skillActor = system.actorOf(Props.create(SkillActor.class , serviceActor));
     }
 
     /**
@@ -125,6 +127,12 @@ public class HomeController extends Controller{
         //new Skills().parseToSkills(received)
         //return ok(views.html.skills.render(  , skill_name));
 //        return result;
+        return FutureConverters.toJava(ask(
+                skillActor , new ServiceActorProtocol.RequestMessage(skill_name,FreelanceAPI.SEARCH_TERM),1000))
+                .thenApply(res->{
+                    List<String> received = (List<String>) res;
+                    return ok(views.html.skills.render(received, skill_name));
+                });
     }
 
     /**
