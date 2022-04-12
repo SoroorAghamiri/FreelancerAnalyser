@@ -6,17 +6,18 @@ import Helpers.Skills;
 import Helpers.WordStat;
 import actors.ServiceActor;
 import actors.ServiceActorProtocol;
-import actors.SkillActor;
 import actors.WordStatsActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import com.fasterxml.jackson.databind.JsonNode;
+import play.core.NamedThreadFactory;
 import play.mvc.*;
 import scala.compat.java8.FutureConverters;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -41,15 +42,13 @@ public class HomeController extends Controller{
     private final Config config;
     final ActorRef wordStatsActor;
     final ActorRef serviceActor;
-    final ActorRef skillActor;
 
     @Inject
     public HomeController(WSClient ws, Config config, ActorSystem system) {
         this.ws = ws;
         this.config = config;
-        serviceActor = system.actorOf(actors.ServiceActor.getProps());
-        wordStatsActor = system.actorOf(Props.create(WordStatsActor.class,ws, config, serviceActor));
-        skillActor = system.actorOf(Props.create(SkillActor.class));
+        serviceActor = system.actorOf(Props.create(ServiceActor.class,ws, config));
+        wordStatsActor = system.actorOf(Props.create(WordStatsActor.class, serviceActor));
     }
 
     /**
@@ -104,23 +103,14 @@ public class HomeController extends Controller{
      * @return skill view, displaying 10 latest projects
      */
     public CompletionStage<Result> getSkillSearch(String skill_name) {
+        CompletionStage<Result> result = new FreelancerAPIService(ws, config)
+                .getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
+                .thenApply(success ->{
+                    JsonNode received = success.asJson();
+                    return ok(views.html.skills.render(new Skills().parseToSkills(received) , skill_name));
+                });
 
-//        CompletionStage<Result> result = new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.SEARCH_TERM.getUrl() + skill_name)
-//                .thenApply(success ->{
-//                    JsonNode received = success.asJson();
-//                    skillactor.tell(new SkillActor.RequestSkillProject(received));
-//                    return  ok(views.html.skills.render(skill_name));
-//                });
-        return FutureConverters.toJava(ask(
-                serviceActor , new ServiceActorProtocol.RequestMessage(skill_name , ws , config , FreelanceAPI.SEARCH_TERM
-                ),1000)).thenApply(success->{
-                    ask(skillActor, new ServiceActorProtocol.JsonMessage((JsonNode)success) , 1000);
-                    return ok(views.html.skills.render(result , skill_name))
-                }).thenApply(result->);
-
-        //new Skills().parseToSkills(received)
-        //return ok(views.html.skills.render(  , skill_name));
-//        return result;
+        return result;
     }
 
     /**
@@ -145,8 +135,12 @@ public class HomeController extends Controller{
 
     public CompletionStage<Result> getWordStats(String query)
     {
-        return FutureConverters.toJava(ask(wordStatsActor, new ServiceActorProtocol.RequestMessage(query, ws, config ,FreelanceAPI.SEARCH_TERM ), 1000))
-                   .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
+        return FutureConverters.toJava(ask(wordStatsActor,
+                        new ServiceActorProtocol.RequestMessage(query, FreelanceAPI.WORD_STATS), 1000))
+                   .thenApply(response -> {
+                       Map<String, Integer> map = (Map<String, Integer>) response;
+                       return ok(views.html.stats.render(map, "Word stats for latest 250 projects for "+query+" term"));
+                   });
     }
 
     /**
@@ -157,19 +151,12 @@ public class HomeController extends Controller{
      */
     public CompletionStage<Result> getSingleProjectStats(String id)
     {
-        CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
-                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.PROJECT_BY_ID.getUrl() + id);
-
-        CompletionStage<Result> result = response.thenApply(res ->{
-            if(res.getStatus() == 404)
-                return notFound("project not found!");
-            JsonNode node = res.asJson();
-
-            return ok(views.html.stats.render(WordStat.processProjectStats(node),
-                    "Single project "+id+" Stats"));
-        });
-
-        return result;
+        return FutureConverters.toJava(ask(wordStatsActor,
+                        new ServiceActorProtocol.SingleProjectRequest(id, FreelanceAPI.PROJECT_BY_ID), 1000))
+                .thenApply(response -> {
+                    Map<String, Integer> map = (Map<String, Integer>) response;
+                    return ok(views.html.stats.render(map, "Single project "+id+" Stats"));
+                });
     }
 
     /**
@@ -191,9 +178,9 @@ public class HomeController extends Controller{
         return ok(views.html.ownerProfile.render());
     }
 
-   // public CompletionStage<Result> requestApi(String message) {
-      //  return FutureConverters.toJava(ask(serviceActor,
-          //              new ServiceActorProtocol.RequestMessage(message, ws, config), 1000))
-             //   .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
-    //}
+//    public CompletionStage<Result> requestApi(String message) {
+//        return FutureConverters.toJava(ask(serviceActor,
+//                        new ServiceActorProtocol.RequestMessage(message, FreelanceAPI.SEARCH_TERM), 1000))
+//                .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
+//    }
 }

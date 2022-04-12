@@ -10,15 +10,24 @@ public class ServiceActorProtocol {
     public static class RequestMessage
     {
         public final String query;
-        public final WSClient ws;
-        public final Config config;
-        public final FreelanceAPI url;
+        public final FreelanceAPI apiEndpoint;
 
-        public RequestMessage(String query, WSClient ws, Config config , FreelanceAPI url) {
+        public RequestMessage(String query, FreelanceAPI apiEndpoint) {
             this.query = query;
-            this.ws = ws;
-            this.config = config;
-            this.url = url;
+            this.apiEndpoint = apiEndpoint;
+
+        }
+    }
+
+    public static class SingleProjectRequest
+    {
+        public final String id;
+        public final FreelanceAPI apiEndpoint;
+
+        public SingleProjectRequest(String id, FreelanceAPI apiEndpoint) {
+            this.id = id;
+            this.apiEndpoint = apiEndpoint;
+
         }
     }
 
