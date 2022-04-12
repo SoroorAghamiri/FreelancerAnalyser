@@ -1,10 +1,9 @@
 package actors;
 
 import akka.actor.AbstractActor;
-import akka.actor.Props;
-import akka.actor.typed.ActorRef;
-import akka.actor.typed.Behavior;
-import akka.actor.typed.javadsl.*;
+
+import akka.actor.ActorRef;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,29 +11,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import model.JobsForProject;
 import model.ProjectsForASkill;
-import play.libs.Json;
-import play.mvc.Result;
-import scala.PartialFunction;
-import scala.runtime.BoxedUnit;
+import scala.compat.java8.FutureConverters;
+import static akka.pattern.Patterns.ask;
 
 import java.util.*;
+import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
-import static play.mvc.Results.ok;
+import static akka.pattern.Patterns.pipe;
+
 
 public class SkillActor extends AbstractActor {
 
-
-    /**
-     * The message requesting the projects related to the searched keyword.
-     */
-    public static final class RequestSkillProject{
-        String receivedJson;
-        public RequestSkillProject(JsonNode selected){
-            this.receivedJson = selected.toPrettyString();
-        }
-    }
-
+    private ActorRef serviceActor;
     /**
      * The message containing the result received and manipulated.
      * This message must be returned as a response to the call to onRequest, and must be displayed on the skills page
@@ -46,10 +35,9 @@ public class SkillActor extends AbstractActor {
         }
     }
 
-    static public Props getProps(){
-        return Props.create(SkillActor.class , SkillActor::new);
+    public SkillActor(ActorRef serviceActor){
+        this.serviceActor = serviceActor;
     }
-
 
 
     /**
@@ -61,8 +49,15 @@ public class SkillActor extends AbstractActor {
 
     @Override
     public Receive createReceive() {
-        return receiveBuilder().match(ServiceActorProtocol.JsonMessage.class , res->sender()
-                        .tell(new ReturnedProjects(onRequest(res.jsonNode)) , self()))
+        return receiveBuilder()
+                .match(ServiceActorProtocol.RequestMessage.class, res->{
+                            CompletionStage<Object> received = FutureConverters.toJava(ask(serviceActor, res, 1000))
+                                            .thenApply(result ->{
+                                                return onRequest((JsonNode) result);
+                                            });
+
+                            pipe(received, getContext().dispatcher()).to(sender());
+                        })
                 .build();
     }
 
