@@ -56,7 +56,7 @@ public class TimerActor extends AbstractActorWithTimers {
 
     @Override
     public void preStart() {
-        getTimers().startPeriodicTimer("Timer", new PushProject(), Duration.create(15, TimeUnit.SECONDS));
+        getTimers().startPeriodicTimer("Timer", new PushProject(), Duration.create(5, TimeUnit.SECONDS));
     }
 
     @Override
@@ -79,14 +79,13 @@ public class TimerActor extends AbstractActorWithTimers {
     private CompletionStage<Object> fetchResult(String keyword) {
         return FutureConverters.toJava(
                     ask(serviceActor ,
-                            new ServiceActorProtocol.RequestMessage(keyword , FreelanceAPI.SEARCH_TERM) ,
+                            new ServiceActorProtocol.RequestMessage(keyword , FreelanceAPI.SINGLE_RESULT) ,
                             5000)).thenApply(res->{
             JsonNode ress = Json.toJson(res);
             UserActor.TimeMessage tMsg = new UserActor.TimeMessage(ress.toPrettyString());
             allUsers.forEach(ar -> ar.tell(tMsg, self()));
             return res;
         });
-
     }
 
 }
