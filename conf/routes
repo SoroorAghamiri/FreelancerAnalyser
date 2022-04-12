@@ -13,7 +13,7 @@ GET     /stats                      controllers.HomeController.getSingleProjectS
 GET     /stats/                     controllers.HomeController.getSingleProjectStatsNotFound()
 GET     /stats/single/:project_id   controllers.HomeController.getSingleProjectStats(project_id: String)
 GET     /stats/single/              controllers.HomeController.getSingleProjectStatsNotFound()
-GET     /readablity/:description    controllers.HomeController.readablity(description: String)
+GET     /readablity/:project_id    controllers.HomeController.readablity(project_id: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

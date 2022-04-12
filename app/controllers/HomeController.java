@@ -7,10 +7,13 @@ import Helpers.WordStat;
 import actors.ServiceActor;
 import actors.ServiceActorProtocol;
 import actors.WordStatsActor;
+import actors.*;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import play.core.NamedThreadFactory;
 import play.mvc.*;
 import scala.compat.java8.FutureConverters;
@@ -40,15 +43,17 @@ public class HomeController extends Controller{
 
     private final WSClient ws;
     private final Config config;
-    final ActorRef wordStatsActor;
     final ActorRef serviceActor;
-
+    final ActorRef wordStatsActor;
+    final ActorRef readabilityActor;
+    
     @Inject
     public HomeController(WSClient ws, Config config, ActorSystem system) {
         this.ws = ws;
         this.config = config;
-        serviceActor = system.actorOf(Props.create(ServiceActor.class,ws, config));
+        serviceActor = system.actorOf(Props.create(ServiceActor.class, ws, config));
         wordStatsActor = system.actorOf(Props.create(WordStatsActor.class, serviceActor));
+        readabilityActor = system.actorOf(Props.create(ReadabilityActor.class, serviceActor));
     }
 
     /**
@@ -68,9 +73,19 @@ public class HomeController extends Controller{
      * @return returns a CompletionStage Result value of the fetch Freelancer.com API request
      */
     public CompletionStage<Result> getSearchTerm(String query) {
-        return  new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() +
-                        FreelanceAPI.SEARCH_TERM.getUrl() + query)
-        .thenApply(result -> ok(Readability.processReadability(result.asJson())));
+    	 
+        return FutureConverters.toJava(ask(readabilityActor,
+                new ServiceActorProtocol.ReadabilityRequest(query, FreelanceAPI.SEARCH_TERM), 1000))
+           .thenApply(response -> {
+        	   try {
+        		   ObjectMapper objectMapper = new ObjectMapper();
+            	   JsonNode jsonNode = objectMapper.readTree(response.toString());
+            	   return ok(jsonNode);
+        	   }catch(Exception e) {
+        		   return ok("Something went wrong when parsing json");
+        	   }
+               
+           });
     }
 
     /**
@@ -79,9 +94,21 @@ public class HomeController extends Controller{
      * @param description of preview_description
      * @return returns a CompletionStage Result value of FKGL and FRI score
      */
-    public CompletableFuture<Result> readablity(String description) {
-    	return CompletableFuture.completedFuture(ok("Preview Description: " +
-                description + "\n" + Readability.processReadabilityForSingleProject(description)));
+    public CompletionStage<Result> readablity(String project_id) {
+    	
+    	return FutureConverters.toJava(ask(readabilityActor, 
+    			new ServiceActorProtocol.SingleReadabilityRequest(project_id, FreelanceAPI.PROJECT_BY_ID), 1000))
+           .thenApply(response -> {
+        	   try {
+        		   ObjectMapper objectMapper = new ObjectMapper();
+            	   JsonNode jsonNode = objectMapper.readTree(response.toString());
+            	   Map<String, String> result = objectMapper.convertValue(jsonNode, new TypeReference<Map<String, String>>(){});
+            	   return ok(views.html.readability.render(result));
+        	   }catch(Exception e) {
+        		   return ok("Something went wrong when parsing json");
+        	   }
+               
+           });
     }
 
     /**

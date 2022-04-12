@@ -58,7 +58,7 @@ $("#go-button").click(function() {
 
 
             $("#result").prepend('<li> <a href="/owner-profile/' + ownerProfileId + '">' + ownerProfileId + '</a> ' + submitDate +
-                projectTitle + ', Type: ' + type + ', <b>[</b>Skills: ' + refined + '<b>]</b>.</a> <a href ="/stats/single/' + projectId + '">Stats.</a> <a target="_blank" href="/readablity/' + encodeURIComponent(preview_des) + '">Readability</a> </li>')
+                projectTitle + ', Type: ' + type + ', <b>[</b>Skills: ' + refined + '<b>]</b>.</a> <a href ="/stats/single/' + projectId + '">Stats.</a> <a target="_blank" href="/readablity/' + projectId + '">Readability</a> </li>')
         }
 
         $("#result").prepend(' <span>FKGL: ' + data['score']['avgFKGL'] + '</span> <br><a href =query id="statsLink">Global Stats</a>');
