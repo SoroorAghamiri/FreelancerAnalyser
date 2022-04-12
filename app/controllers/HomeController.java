@@ -4,16 +4,16 @@ import Helpers.FreelanceAPI;
 import Helpers.Readability;
 import Helpers.Skills;
 import Helpers.WordStat;
-import actors.ServiceActor;
-import actors.ServiceActorProtocol;
-import actors.SkillActor;
-import actors.WordStatsActor;
+import actors.*;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import akka.stream.Materializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import play.core.NamedThreadFactory;
+import play.libs.streams.ActorFlow;
 import play.mvc.*;
+import play.mvc.Http.Request.*;
 import scala.compat.java8.FutureConverters;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
@@ -28,13 +28,14 @@ import javax.inject.Inject;
 import com.typesafe.config.Config;
 import java.lang.*;
 
+
 import static akka.pattern.Patterns.ask;
 
 /**
  * This controller contains an action to handle HTTP requests
  * to the application's home page.
  * @author Haitham Abdel-Sala
- * @author Soroor Aghimiri
+ * @author Soroor Sadat Seyed Aghamiri
  * @author Asif Kazi Asif Tanim
  * @author Bariq Ishtiaq
  */
@@ -45,6 +46,9 @@ public class HomeController extends Controller{
     final ActorRef wordStatsActor;
     final ActorRef serviceActor;
     final ActorRef skillActor;
+    final ActorRef timerActor;
+    @Inject private Materializer materializer;
+    @Inject private ActorSystem actorSystem;
 
     @Inject
     public HomeController(WSClient ws, Config config, ActorSystem system) {
@@ -56,6 +60,11 @@ public class HomeController extends Controller{
         wordStatsActor = system.actorOf(Props.create(WordStatsActor.class,ws, config, serviceActor));
         skillActor = system.actorOf(Props.create(SkillActor.class));
         skillActor = system.actorOf(Props.create(SkillActor.class , serviceActor));
+        timerActor = system.actorOf(TimerActor.getProps(serviceActor), "timeActor");
+    }
+
+    public WebSocket ws() {
+        return WebSocket.Json.accept(request -> ActorFlow.actorRef(out->UserActor.props(out, timerActor), actorSystem, materializer));
     }
 
     /**
@@ -64,8 +73,8 @@ public class HomeController extends Controller{
 	 * @return returns a play.mvc.Result value, representing the HTTP response to
 	 *         send to the client
 	 */
-    public Result index(){
-        return ok(views.html.index.render());
+    public Result index(Http.Request request){
+        return ok(views.html.index.render(request));
     }
 
     /**
@@ -75,9 +84,8 @@ public class HomeController extends Controller{
      * @return returns a CompletionStage Result value of the fetch Freelancer.com API request
      */
     public CompletionStage<Result> getSearchTerm(String query) {
-        return  new FreelancerAPIService(ws, config).getAPIResult(FreelanceAPI.BASE_URL.getUrl() +
-                        FreelanceAPI.SEARCH_TERM.getUrl() + query)
-        .thenApply(result -> ok(Readability.processReadability(result.asJson())));
+        return  FutureConverters.toJava(ask(timerActor, new TimerActor.NewSearch(query) , 1000))
+        .thenApply(result -> ok(Readability.processReadability((JsonNode) result)));
     }
 
     /**
