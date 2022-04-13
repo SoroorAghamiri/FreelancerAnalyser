@@ -20,16 +20,36 @@ import java.util.concurrent.CompletionStage;
 
 import static akka.pattern.Patterns.ask;
 
+/**
+ * This actor is responsible for handling the websocket.
+ * Each time a new user joins, a new user actor is created and registers itself with the timer actor.
+ * @author Soroor
+ */
 public class UserActor extends AbstractActor {
+    /**
+     * A reference to the websocket
+     */
     private final ActorRef ws;
+    /**
+     * Reference to the time actor
+     */
     private final ActorRef timeActor;
+    /**
+     * Search history
+     */
     private Set<String> history;
 
+    /**
+     * New search keyword that must be added to the history
+     */
     static  public class SearchedTerm{
         public String keyword;
         public SearchedTerm(String keyword){this.keyword = keyword;}
     }
 
+    /**
+     * The message that contains the search result, sent from timer actor
+     */
     static public class TimeMessage {
         public final String searchResult;
         public TimeMessage(String searchResult) {
@@ -53,6 +73,11 @@ public class UserActor extends AbstractActor {
     public void preStart() {
         timeActor.tell(new TimerActor.RegisterMessage(), self());
     }
+
+    /**
+     * Handles messages
+     * @return receive builder
+     */
     @Override
     public Receive createReceive() {
         return receiveBuilder()

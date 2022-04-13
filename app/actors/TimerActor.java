@@ -15,7 +15,10 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 import static akka.pattern.Patterns.ask;
 
-
+/**
+ * Keeps the track of time and sends a refresh message after specific time spans.
+ * @author Soroor Aghamiri
+ */
 public class TimerActor extends AbstractActorWithTimers {
     /**
      * List of all registered users
@@ -26,6 +29,9 @@ public class TimerActor extends AbstractActorWithTimers {
      * a reference to the service actor
      */
     private ActorRef serviceActor;
+    /**
+     * Last keyword searched.
+     */
     private String latestSearch = null;
 
     /**
@@ -38,6 +44,9 @@ public class TimerActor extends AbstractActorWithTimers {
      */
     static public  class RegisterMessage{}
 
+    /**
+     * Message that contains the keyword for a new search request.
+     */
     static public class NewSearch{
         public String keyword;
         public NewSearch(String keyword){
@@ -54,11 +63,18 @@ public class TimerActor extends AbstractActorWithTimers {
         latestSearch = null;
     }
 
+    /**
+     * Starts the timer
+     */
     @Override
     public void preStart() {
         getTimers().startPeriodicTimer("Timer", new PushProject(), Duration.create(15, TimeUnit.SECONDS));
     }
 
+    /**
+     * Handles the actions towards different messages
+     * @return receive builder
+     */
     @Override
     public Receive createReceive() {
         return receiveBuilder().match(RegisterMessage.class, msg->allUsers.add(sender()))
@@ -69,6 +85,9 @@ public class TimerActor extends AbstractActorWithTimers {
                 .match(PushProject.class , msg->notifyUsers()).build();
     }
 
+    /**
+     * If there is a new keyword, fetches the new projects
+     */
     public void notifyUsers(){
         if(latestSearch != null){
             fetchResult(latestSearch);
@@ -76,6 +95,11 @@ public class TimerActor extends AbstractActorWithTimers {
 
     }
 
+    /**
+     * Sends a request to service actor to receive the projects related to keyword
+     * @param keyword new searched term
+     * @return result of search to the websocket
+     */
     private CompletionStage<Object> fetchResult(String keyword) {
         return FutureConverters.toJava(
                     ask(serviceActor ,
