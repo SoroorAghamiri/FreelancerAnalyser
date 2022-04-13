@@ -14,5 +14,14 @@ libraryDependencies ++= Seq(
 )
 libraryDependencies += ws
 libraryDependencies += ehcache
-libraryDependencies += "org.mockito" % "mockito-core" % "2.10.0" % "test"
+libraryDependencies += "org.mockito" % "mockito-core" % "4.4.0" % "test"
+val AkkaVersion = "2.6.19"
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % AkkaVersion % Test
+libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % AkkaVersion % Test
+libraryDependencies += "com.typesafe.akka" %% "akka-protobuf-v3" % AkkaVersion % Test
+libraryDependencies += "com.typesafe.akka" %% "akka-serialization-jackson" % AkkaVersion % Test
+libraryDependencies += "com.typesafe.akka" %% "akka-stream" % AkkaVersion % Test
+libraryDependencies += "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion % Test
+
+
 

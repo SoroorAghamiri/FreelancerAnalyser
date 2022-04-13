@@ -4,6 +4,7 @@ import akka.actor.AbstractActor;
 
 import akka.actor.ActorRef;
 
+import akka.actor.Props;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,19 +30,14 @@ public class SkillActor extends AbstractActor {
      * reference to service actor
      */
     private ActorRef serviceActor;
-    /**
-     * The message containing the result received and manipulated.
-     * This message must be returned as a response to the call to onRequest, and must be displayed on the skills page
-     */
-    public static final class ReturnedProjects{
-        List<String> allProjects;
-        public ReturnedProjects(List<String> all){
-            this.allProjects = all;
-        }
-    }
+
 
     public SkillActor(ActorRef serviceActor){
         this.serviceActor = serviceActor;
+    }
+
+    public static Props getProps(ActorRef serviceActor) {
+        return Props.create(SkillActor.class , serviceActor);
     }
 
 
@@ -71,7 +67,7 @@ public class SkillActor extends AbstractActor {
      * @param received the result of api request
      * @return a list of strings containing the parsed projects
      */
-    private List<String> onRequest(JsonNode received){
+    public List<String> onRequest(JsonNode received){
         String selected = received.toPrettyString();
         List<ProjectsForASkill> allproject= stringToProjectForASkill(selected);
         List<String> foundprojectstring = new ArrayList<>();

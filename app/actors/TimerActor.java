@@ -100,7 +100,7 @@ public class TimerActor extends AbstractActorWithTimers {
      * @param keyword new searched term
      * @return result of search to the websocket
      */
-    private CompletionStage<Object> fetchResult(String keyword) {
+    public CompletionStage<Object> fetchResult(String keyword) {
         return FutureConverters.toJava(
                     ask(serviceActor ,
                             new ServiceActorProtocol.RequestMessage(keyword , FreelanceAPI.SINGLE_RESULT) ,
