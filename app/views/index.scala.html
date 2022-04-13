@@ -1,21 +1,14 @@
 @(request: play.mvc.Http.Request)
-<!DOCTYPE html>
 
 @main("Welcome to Play") {
 
-<html>
-<head>
-  <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>;
-  <script type='text/javascript' src='@routes.Assets.at("javascript/index.js")'></script>
-</head>
+<div id="webSocket" data-ws-url="@routes.HomeController.ws.webSocketURL(request)">
+	
+</div>
 
-<body data-ws-url="@routes.HomeController.ws.webSocketURL(request)">
 <div class="text-center mt-3">
   <h3>Welcome to Freelancer Analyser!</h3>
 </div>
-<div id="time"> </div>
-</body>
-</html>
   <div class="row mt-5">
     <div class="col-4"></div>
     <div class="col-4">
@@ -37,7 +30,7 @@
     <div class="col-2"></div>
 
     <div class="col-8" id="result">
-
+		
     </div>
     <div class="col-2"></div>
 
@@ -48,12 +41,17 @@
 var statsId = 0;
 $("#stats").addClass("disableStats");
 
+var projectArray = [];
+var lastSearch = "";
+
 $("#go-button").click(function() {
     $.get("/get-search-term/" + $("#search").val(), function(data, status) {
-
-
+		lastSearch = $("#search").val().replace(/\s/g, '-');;
+		projectArray = [];
+		
+		$("#result").prepend('<div id="'+lastSearch+'"></div>');
         for (let i = 0; i < data['result']['projects'].length; i++) {
-
+			projectArray.push(data['result']['projects'][i]);
             var projectTitle = ', <a target="_blank" href="https://www.freelancer.com/projects/' + data['result']['projects'][i]['seo_url'] + '">' + data['result']['projects'][i]['title'] + '</a>';
             var ownerProfileId = data['result']['projects'][i]['owner_id'];
             var projectId = data['result']['projects'][i]['id'];
@@ -68,15 +66,15 @@ $("#go-button").click(function() {
             }
             var refined = allSkills.join(' ');
 
-
-            $("#result").prepend('<li> <a href="/owner-profile/' + ownerProfileId + '">' + ownerProfileId + '</a> ' + submitDate +
-                projectTitle + ', Type: ' + type + ', <b>[</b>Skills: ' + refined + '<b>]</b>.</a> <a href ="/stats/single/' + projectId + '">Stats.</a> <a target="_blank" href="/readablity/' + encodeURIComponent(preview_des) + '">Readability</a> </li>')
+					
+            $("#result > #"+lastSearch).prepend('<li>'+(data['result']['projects'].length-i)+'. <a href="/owner-profile/' + ownerProfileId + '">' + ownerProfileId + '</a> ' + submitDate +
+                projectTitle + ', Type: ' + type + ', <b>[</b>Skills: ' + refined + '<b>]</b>.</a> <a href ="/stats/single/' + projectId + '">Stats.</a> <a target="_blank" href="/readablity/' + projectId + '">Readability</a> </li>')
         }
 
-        $("#result").prepend(' <span>FKGL: ' + data['score']['avgFKGL'] + '</span> <br><a href =query id="statsLink">Global Stats</a>');
-        $("#result").prepend(' : <span>Flesh Reading Ease Index: ' + data['score']['avgFREI'] + '</span>');
-        $("#result").prepend('<label class="fw-bold">Search terms: ' + $("#search").val() + "</label>");
-        $("#result").prepend('<div class="mt-5"></div>');
+        $("#result > #"+lastSearch).prepend(' <span>FKGL: ' + data['score']['avgFKGL'] + '</span> <br><a href =query id="statsLink">Global Stats</a>');
+        $("#result > #"+lastSearch).prepend(' : <span>Flesh Reading Ease Index: ' + data['score']['avgFREI'] + '</span>');
+        $("#result > #"+lastSearch).prepend('<label class="fw-bold">Search terms: ' + $("#search").val() + "</label>");
+        $("#result > #"+lastSearch).prepend('<br>');
 
         //Word stats parsing
 
@@ -95,16 +93,45 @@ $("#go-button").click(function() {
     });
 
 });
-</script>
-<script>
-    (function() {
+
+
+
+(function() {
   $(function() {
     var ws;
-    ws = new WebSocket($("body").data("ws-url"));
+    ws = new WebSocket($("#webSocket").data("ws-url"));
     return ws.onmessage = function(event) {
       var message;
       message = JSON.parse(event.data);
-      return $('#time').append(message.time + "<br/>");
+      var data = JSON.parse(message['time']);
+      
+      
+      console.log(data['result']['projects']);
+      console.log(projectArray);
+
+        var projectTitle = ', <a target="_blank" href="https://www.freelancer.com/projects/' + data['result']['projects'][0]['seo_url'] + '">' + data['result']['projects'][0]['title'] + '</a>';
+        var ownerProfileId = data['result']['projects'][0]['owner_id'];
+        var projectId = data['result']['projects'][0]['id'];
+        var preview_des = data['result']['projects'][0]['preview_description'];
+        var submitDate = new Date(data['result']['projects'][0]['submitdate'] * 1000).toDateString();
+        var type = data['result']['projects'][0]['type'];
+        
+        
+		
+        var allSkills = new Array();
+        for (let j = 0; j < data['result']['projects'][0]['jobs'].length; j++) {
+            var skill = data['result']['projects'][0]['jobs'][j]['name'];
+            allSkills.push('<a href="/skills/' + skill + '">' + skill + '.</a>');
+        }
+        var refined = allSkills.join(' ');
+
+		if(!projectArray.some(i => i.id === projectId)){
+			projectArray.push(data['result']['projects'][0]);
+        	$("#result > #"+lastSearch).append('<li> '+(projectArray.length)+' <a href="/owner-profile/' + ownerProfileId + '">' + ownerProfileId + '</a> ' + submitDate +
+            projectTitle + ', Type: ' + type + ', <b>[</b>Skills: ' + refined + '<b>]</b>.</a> <a href ="/stats/single/' + projectId + '">Stats.</a> <a target="_blank" href="/readablity/' + projectId + '">Readability</a> </li>')
+        }
+        
+      
     };
   });
 

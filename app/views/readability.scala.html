@@ -1,0 +1,14 @@
+@(readabilityMap: Map[String, String])
+
+<html>
+<head>
+
+    <title>Word Stats</title>
+</head>
+<body>
+        @for((key, value) <- readabilityMap) {
+            <p><div>@value</div></p>
+        }
+
+</body>
+</html>

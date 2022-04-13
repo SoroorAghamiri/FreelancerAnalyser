@@ -3,12 +3,19 @@ package controllers;
 import Helpers.FreelanceAPI;
 import Helpers.Readability;
 import Helpers.Skills;
+import Helpers.WordStat;
+import actors.ServiceActor;
+import actors.ServiceActorProtocol;
+import actors.WordStatsActor;
 import actors.*;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.stream.Materializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import play.core.NamedThreadFactory;
 import play.libs.streams.ActorFlow;
 import play.mvc.*;
 import scala.compat.java8.FutureConverters;
@@ -40,7 +47,6 @@ public class HomeController extends Controller{
 
     private final WSClient ws;
     private final Config config;
-    final ActorRef wordStatsActor;
     final ActorRef serviceActor;
     final ActorRef skillActor;
     final ActorRef ownerProfileActor;
@@ -48,15 +54,19 @@ public class HomeController extends Controller{
     @Inject private Materializer materializer;
     @Inject private ActorSystem actorSystem;
 
+    final ActorRef wordStatsActor;
+    final ActorRef readabilityActor;
+    
     @Inject
     public HomeController(WSClient ws, Config config, ActorSystem system) {
         this.ws = ws;
         this.config = config;
-        serviceActor = system.actorOf(Props.create(ServiceActor.class,ws, config));
+        serviceActor = system.actorOf(Props.create(ServiceActor.class, ws, config));
         wordStatsActor = system.actorOf(Props.create(WordStatsActor.class, serviceActor));
         skillActor = system.actorOf(Props.create(SkillActor.class , serviceActor));
         ownerProfileActor = system.actorOf(Props.create(OwnerProfileActor.class, serviceActor));
         timerActor = system.actorOf(TimerActor.getProps(serviceActor), "timeActor");
+        readabilityActor = system.actorOf(Props.create(ReadabilityActor.class, serviceActor));
     }
 
     public WebSocket ws() {
@@ -80,19 +90,52 @@ public class HomeController extends Controller{
      * @return returns a CompletionStage Result value of the fetch Freelancer.com API request
      */
     public CompletionStage<Result> getSearchTerm(String query) {
-        return  FutureConverters.toJava(ask(timerActor, new TimerActor.NewSearch(query) , 1000))
-        .thenApply(result -> ok(Readability.processReadability((JsonNode) result)));
+        return FutureConverters.toJava(ask(readabilityActor,
+                new ServiceActorProtocol.RequestMessage(query, FreelanceAPI.SEARCH_TERM), 1000))
+           .thenApply(response -> {
+        	   try {
+        		   ObjectMapper objectMapper = new ObjectMapper();
+            	   JsonNode jsonNode = objectMapper.readTree(response.toString());
+            	   enableSearchWS(query);
+            	   return ok(jsonNode);
+        	   }catch(Exception e) {
+        		   return ok(e.getMessage());
+        	   }
+               
+           });
+    }
+    
+    /**
+     * 
+     * @author Soroor Sadat Seyed Aghamiri
+     * @param query of search query
+     * @return void
+     */
+    private void enableSearchWS(String query) {
+    	FutureConverters.toJava(ask(timerActor, new TimerActor.NewSearch(query) , 1000));
     }
 
     /**
      * Readability class to handale one readability calculations
      * @author Kazi Asif Tanim
-     * @param description of preview_description
+     * @param project_id of preview_description
      * @return returns a CompletionStage Result value of FKGL and FRI score
      */
-    public CompletableFuture<Result> readablity(String description) {
-    	return CompletableFuture.completedFuture(ok("Preview Description: " +
-                description + "\n" + Readability.processReadabilityForSingleProject(description)));
+    public CompletionStage<Result> readablity(String project_id) {
+    	
+    	return FutureConverters.toJava(ask(readabilityActor, 
+    			new ServiceActorProtocol.SingleProjectRequest(project_id, FreelanceAPI.PROJECT_BY_ID), 1000))
+           .thenApply(response -> {
+        	   try {
+        		   ObjectMapper objectMapper = new ObjectMapper();
+            	   JsonNode jsonNode = objectMapper.readTree(response.toString());
+            	   Map<String, String> result = objectMapper.convertValue(jsonNode, new TypeReference<Map<String, String>>(){});
+            	   return ok(views.html.readability.render(result));
+        	   }catch(Exception e) {
+        		   return ok("Something went wrong when parsing json");
+        	   }
+               
+           });
     }
 
     /**
