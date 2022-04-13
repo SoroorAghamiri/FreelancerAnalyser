@@ -2,6 +2,7 @@ package actors;
 
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
+import akka.actor.Props;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -36,6 +37,10 @@ public class OwnerProfileActor extends AbstractActor {
 
     public OwnerProfileActor(ActorRef serviceActor) {
         this.serviceActor = serviceActor;
+    }
+
+    public static Props getProps(ActorRef serviceActor) {
+        return Props.create(OwnerProfileActor.class , serviceActor);
     }
 
     @Override
