@@ -92,23 +92,24 @@ public class HomeController extends Controller{
     public CompletionStage<Result> getSearchTerm(String query) {
         // return  FutureConverters.toJava(ask(timerActor, new TimerActor.NewSearch(query) , 1000))
         // .thenApply(result -> ok(Readability.processReadability((JsonNode) result)));
-    	 
+    	//FutureConverters.toJava(ask(timerActor, new TimerActor.NewSearch(query) , 1000));
         return FutureConverters.toJava(ask(readabilityActor,
                 new ServiceActorProtocol.ReadabilityRequest(query, FreelanceAPI.SEARCH_TERM), 1000))
            .thenApply(response -> {
         	   try {
         		   ObjectMapper objectMapper = new ObjectMapper();
             	   JsonNode jsonNode = objectMapper.readTree(response.toString());
+            	   enableSearchWS(query);
             	   return ok(jsonNode);
         	   }catch(Exception e) {
-        		   return ok("Something went wrong when parsing json");
+        		   return ok(e.getMessage());
         	   }
                
            });
     }
-
-    public void enableSearchTermActor(){
-        FutureConverters.toJava(ask(timerActor, new TimerActor.NewSearch(query) , 1000));
+    
+    private void enableSearchWS(String query) {
+    	FutureConverters.toJava(ask(timerActor, new TimerActor.NewSearch(query) , 1000));
     }
 
     /**

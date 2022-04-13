@@ -59,7 +59,7 @@ public class ReadabilityActor extends AbstractActor{
                         ServiceActorProtocol.SingleReadabilityRequest.class,
                         msg -> {
                             CompletionStage<Object> fut =
-                                    FutureConverters.toJava(ask(serviceActor, msg, 5000))
+                                    FutureConverters.toJava(ask(serviceActor, msg, 1000))
                                             .thenApply(result ->{
                                         return processReadabilityForSingleProject((JsonNode) result);
                                     });
