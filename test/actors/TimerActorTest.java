@@ -2,6 +2,8 @@ package actors;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.Props;
+import akka.testkit.TestActorRef;
 import akka.testkit.javadsl.TestKit;
 import com.typesafe.config.Config;
 import org.junit.AfterClass;
@@ -10,9 +12,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import play.mvc.Action;
 
+import java.time.Duration;
+
+import static org.mockito.Mockito.mock;
 import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.GET;
 
+/**
+ * tests timer actor
+ * @author Soroor
+ */
 public class TimerActorTest {
     /**
      * A test actor system
@@ -49,10 +58,5 @@ public class TimerActorTest {
         ServiceActorProtocol.RequestMessage expected = testProbe.expectMsgClass(ServiceActorProtocol.RequestMessage.class);
         Assert.assertNotNull(expected);
 
-
-        ActorRef serviceActor = system.actorOf(MockServiceActor.getProps());
-        ActorRef secondTimeActor = system.actorOf(TimerActor.getProps(serviceActor));
-        secondTimeActor.tell(new TimerActor.NewSearch("test2") , testProbe.getRef());
-        Assert.assertNull(testProbe.expectMsgClass(UserActor.TimeMessage.class));
     }
 }
