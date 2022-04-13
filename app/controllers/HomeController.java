@@ -90,9 +90,6 @@ public class HomeController extends Controller{
      * @return returns a CompletionStage Result value of the fetch Freelancer.com API request
      */
     public CompletionStage<Result> getSearchTerm(String query) {
-        // return  FutureConverters.toJava(ask(timerActor, new TimerActor.NewSearch(query) , 1000))
-        // .thenApply(result -> ok(Readability.processReadability((JsonNode) result)));
-    	//FutureConverters.toJava(ask(timerActor, new TimerActor.NewSearch(query) , 1000));
         return FutureConverters.toJava(ask(readabilityActor,
                 new ServiceActorProtocol.ReadabilityRequest(query, FreelanceAPI.SEARCH_TERM), 1000))
            .thenApply(response -> {
@@ -108,6 +105,12 @@ public class HomeController extends Controller{
            });
     }
     
+    /**
+     * 
+     * @author Soroor Sadat Seyed Aghamiri
+     * @param query of search query
+     * @return void
+     */
     private void enableSearchWS(String query) {
     	FutureConverters.toJava(ask(timerActor, new TimerActor.NewSearch(query) , 1000));
     }
