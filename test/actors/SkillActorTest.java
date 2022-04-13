@@ -67,5 +67,6 @@ public class SkillActorTest {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.readTree(jsonString);
         Assert.assertNotNull(actor.onRequest(actualObj));
+
     }
 }
