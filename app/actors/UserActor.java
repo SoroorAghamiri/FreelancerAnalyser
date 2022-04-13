@@ -34,18 +34,6 @@ public class UserActor extends AbstractActor {
      * Reference to the time actor
      */
     private final ActorRef timeActor;
-    /**
-     * Search history
-     */
-    private Set<String> history;
-
-    /**
-     * New search keyword that must be added to the history
-     */
-    static  public class SearchedTerm{
-        public String keyword;
-        public SearchedTerm(String keyword){this.keyword = keyword;}
-    }
 
     /**
      * The message that contains the search result, sent from timer actor
@@ -60,7 +48,7 @@ public class UserActor extends AbstractActor {
     public UserActor(final ActorRef wsOut , ActorRef timeActor){
         ws = wsOut;
         this.timeActor = timeActor;
-        history = new HashSet<>();
+//        history = new HashSet<>();
     }
     public static Props props(final ActorRef wsout , ActorRef timeActor) {
         return Props.create(UserActor.class, wsout ,  timeActor);
@@ -81,8 +69,7 @@ public class UserActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-                .match(TimeMessage.class , msg->{sendTime(msg);})
-                .match(SearchedTerm.class , msg->history.add(msg.keyword)).build();
+                .match(TimeMessage.class , msg->{sendTime(msg);}).build();
     }
 
     /**
