@@ -29,19 +29,14 @@ public class SkillActor extends AbstractActor {
      * reference to service actor
      */
     private ActorRef serviceActor;
-    /**
-     * The message containing the result received and manipulated.
-     * This message must be returned as a response to the call to onRequest, and must be displayed on the skills page
-     */
-    public static final class ReturnedProjects{
-        List<String> allProjects;
-        public ReturnedProjects(List<String> all){
-            this.allProjects = all;
-        }
-    }
+
 
     public SkillActor(ActorRef serviceActor){
         this.serviceActor = serviceActor;
+    }
+
+    public static Props getProps(ActorRef serviceActor) {
+        return Props.create(SkillActor.class , serviceActor);
     }
 
 

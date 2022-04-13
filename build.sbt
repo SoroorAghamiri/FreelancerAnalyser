@@ -22,3 +22,6 @@ libraryDependencies += "com.typesafe.akka" %% "akka-protobuf-v3" % AkkaVersion %
 libraryDependencies += "com.typesafe.akka" %% "akka-serialization-jackson" % AkkaVersion % Test
 libraryDependencies += "com.typesafe.akka" %% "akka-stream" % AkkaVersion % Test
 libraryDependencies += "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion % Test
+
+
+

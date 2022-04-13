@@ -49,9 +49,8 @@ public class UserActorTest {
      * creates a user actor, sends a message of type TimeMessage
      */
     @Test
-    public void test() {
+    public void userActorTest() {
         final TestKit testProbe = new TestKit(system);
-        ActorRef serviceActor = null;
         ActorRef timerActor = system.actorOf(TimerActor.getProps(testProbe.getRef()));
         ActorRef userActor = system.actorOf(UserActor.props(testProbe.getRef() , timerActor), "User-actor");
 
