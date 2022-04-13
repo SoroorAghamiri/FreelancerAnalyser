@@ -45,7 +45,7 @@ public class ReadabilityActor extends AbstractActor{
 		// TODO Auto-generated method stub
 		return receiveBuilder()
                 .match(
-                        ServiceActorProtocol.ReadabilityRequest.class,
+                        ServiceActorProtocol.RequestMessage.class,
                         msg -> {
                             CompletionStage<Object> fut =
                                     FutureConverters.toJava(ask(serviceActor, msg, 1000))
@@ -56,7 +56,7 @@ public class ReadabilityActor extends AbstractActor{
                             pipe(fut, getContext().dispatcher()).to(sender());
                         })
                 .match(
-                        ServiceActorProtocol.SingleReadabilityRequest.class,
+                        ServiceActorProtocol.SingleProjectRequest.class,
                         msg -> {
                             CompletionStage<Object> fut =
                                     FutureConverters.toJava(ask(serviceActor, msg, 1000))
@@ -106,7 +106,7 @@ public class ReadabilityActor extends AbstractActor{
 	
 	/**
      * Process a given String and calculate FRI amd FKGL
-     * @param description string of preview_description
+     * @param jsonNode string of preview_description
      * @return a JsonNode by appending FRI and FKGL score and Education level to read
      */
 	public JsonNode processReadabilityForSingleProject(JsonNode jsonNode) {

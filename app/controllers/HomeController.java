@@ -91,7 +91,7 @@ public class HomeController extends Controller{
      */
     public CompletionStage<Result> getSearchTerm(String query) {
         return FutureConverters.toJava(ask(readabilityActor,
-                new ServiceActorProtocol.ReadabilityRequest(query, FreelanceAPI.SEARCH_TERM), 1000))
+                new ServiceActorProtocol.RequestMessage(query, FreelanceAPI.SEARCH_TERM), 1000))
            .thenApply(response -> {
         	   try {
         		   ObjectMapper objectMapper = new ObjectMapper();
@@ -118,13 +118,13 @@ public class HomeController extends Controller{
     /**
      * Readability class to handale one readability calculations
      * @author Kazi Asif Tanim
-     * @param description of preview_description
+     * @param project_id of preview_description
      * @return returns a CompletionStage Result value of FKGL and FRI score
      */
     public CompletionStage<Result> readablity(String project_id) {
     	
     	return FutureConverters.toJava(ask(readabilityActor, 
-    			new ServiceActorProtocol.SingleReadabilityRequest(project_id, FreelanceAPI.PROJECT_BY_ID), 1000))
+    			new ServiceActorProtocol.SingleProjectRequest(project_id, FreelanceAPI.PROJECT_BY_ID), 1000))
            .thenApply(response -> {
         	   try {
         		   ObjectMapper objectMapper = new ObjectMapper();
