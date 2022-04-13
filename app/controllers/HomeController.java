@@ -3,17 +3,14 @@ package controllers;
 import Helpers.FreelanceAPI;
 import Helpers.Readability;
 import Helpers.Skills;
-import Helpers.WordStat;
 import actors.*;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.stream.Materializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import play.core.NamedThreadFactory;
 import play.libs.streams.ActorFlow;
 import play.mvc.*;
-import play.mvc.Http.Request.*;
 import scala.compat.java8.FutureConverters;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
@@ -46,6 +43,7 @@ public class HomeController extends Controller{
     final ActorRef wordStatsActor;
     final ActorRef serviceActor;
     final ActorRef skillActor;
+    final ActorRef ownerProfileActor;
     final ActorRef timerActor;
     @Inject private Materializer materializer;
     @Inject private ActorSystem actorSystem;
@@ -57,6 +55,7 @@ public class HomeController extends Controller{
         serviceActor = system.actorOf(Props.create(ServiceActor.class,ws, config));
         wordStatsActor = system.actorOf(Props.create(WordStatsActor.class, serviceActor));
         skillActor = system.actorOf(Props.create(SkillActor.class , serviceActor));
+        ownerProfileActor = system.actorOf(Props.create(OwnerProfileActor.class, serviceActor));
         timerActor = system.actorOf(TimerActor.getProps(serviceActor), "timeActor");
     }
 
@@ -170,7 +169,9 @@ public class HomeController extends Controller{
      * @author Bariq
      * @return result
      */
-    public Result getOwnerView(String owner_id){
-        return ok(views.html.ownerProfile.render());
+    public CompletionStage<Result> getOwnerView(String owner_id) {
+        return FutureConverters.toJava(ask(serviceActor,
+                        new ServiceActorProtocol.RequestMessage(owner_id, FreelanceAPI.OWNER_PROFILE), 1000))
+                .thenApply(response -> ok(views.html.ownerProfile.render()));
     }
 }
