@@ -65,12 +65,12 @@ public class HomeController extends Controller{
     }
 
     /**
-	 * Action method calls the view template index and render the home page
-	 * @author Kazi Asif Tanim
-	 * @return returns a play.mvc.Result value, representing the HTTP response to
-	 *         send to the client
+	 * Sends a null message to time actor to reset the page, and opens home page
+	 * @author Soroor
+	 * @return renders home page
 	 */
     public Result index(Http.Request request){
+        timerActor.tell(new TimerActor.NewSearch(null) , timerActor);
         return ok(views.html.index.render(request));
     }
 
@@ -109,7 +109,7 @@ public class HomeController extends Controller{
     }
 
     /**
-     * Gets the 10 latest projects related to a skill
+     * Gets the 10 latest projects related to a skill, calls skill actor to get the 10 latest projects
      * @author Soroor
      * @param skill_name the skill selected in the main page
      * @return skill view, displaying 10 latest projects

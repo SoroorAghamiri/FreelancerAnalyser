@@ -20,9 +20,14 @@ import java.util.stream.Collectors;
 
 import static akka.pattern.Patterns.pipe;
 
-
+/**
+ * Skill actor requests the data for a skill from Service actor and parses it
+ * @author Soroor
+ */
 public class SkillActor extends AbstractActor {
-
+    /**
+     * reference to service actor
+     */
     private ActorRef serviceActor;
     /**
      * The message containing the result received and manipulated.
@@ -63,10 +68,8 @@ public class SkillActor extends AbstractActor {
 
     /**
      * Get the json, get the wanted fields and return the result
-     * TODO: we also need a method to ensure there are no duplicates
-     * TODO: return parameter is not correct. you need to send a returnedproject message
-     * @param received
-     * @return
+     * @param received the result of api request
+     * @return a list of strings containing the parsed projects
      */
     private List<String> onRequest(JsonNode received){
         String selected = received.toPrettyString();
@@ -81,6 +84,12 @@ public class SkillActor extends AbstractActor {
         return foundprojectstring;
     }
 
+    /**
+     * Gets the json string, parses it to a list of <code>ProjectsForASkill</code>,
+     * fetches the list of jobs related to each project and places them inside the list.
+     * @param received json string
+     * @return list of ProjectsForASkills
+     */
     public static List<ProjectsForASkill> stringToProjectForASkill(String received){
         try {
             ObjectMapper objectmapper = new ObjectMapper();
