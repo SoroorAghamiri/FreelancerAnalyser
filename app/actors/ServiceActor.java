@@ -47,12 +47,13 @@ public class ServiceActor extends AbstractActor {
                         {
                             CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config)
                                     .getAPIResult(FreelanceAPI.BASE_URL.getUrl()
-                                    + FreelanceAPI.SEARCH_TERM.getUrl() + request.id);
+                                            + request.apiEndpoint.getUrl() + request.id);
 
                             CompletionStage<Object> result = response.thenApply(res-> res.asJson());
 
                             pipe(result, getContext().dispatcher()).to(sender());
-                        })
+                        }
+                )
                 .match(
                         ServiceActorProtocol.ReadabilityRequest.class,
                         request ->
