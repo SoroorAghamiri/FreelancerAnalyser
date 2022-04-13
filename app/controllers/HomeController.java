@@ -129,20 +129,6 @@ public class HomeController extends Controller{
      * @param query Search term query
      * @return CompletionStage Result value of the latest 250 project with query term
      */
-//    public CompletionStage<Result> getWordStats(String query)
-//    {
-//         CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
-//                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.WORD_STATS.getUrl() + query);
-//
-//         CompletionStage<Result> result = response.thenApply(res ->{
-//             JsonNode node = res.asJson();
-//             return ok(views.html.stats.render(WordStat.processAllProjectsStats(node),
-//                     "Word stats for latest 250 projects for "+query+" term"));
-//         });
-//
-//         return result;
-//    }
-
     public CompletionStage<Result> getWordStats(String query)
     {
         return FutureConverters.toJava(ask(wordStatsActor,
@@ -187,10 +173,4 @@ public class HomeController extends Controller{
     public Result getOwnerView(String owner_id){
         return ok(views.html.ownerProfile.render());
     }
-
-//    public CompletionStage<Result> requestApi(String message) {
-//        return FutureConverters.toJava(ask(serviceActor,
-//                        new ServiceActorProtocol.RequestMessage(message, FreelanceAPI.SEARCH_TERM), 1000))
-//                .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
-//    }
 }
