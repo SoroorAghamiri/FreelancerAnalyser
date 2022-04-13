@@ -14,5 +14,6 @@ libraryDependencies ++= Seq(
 )
 libraryDependencies += ws
 libraryDependencies += ehcache
-libraryDependencies += "org.mockito" % "mockito-core" % "2.10.0" % "test"
-
+libraryDependencies += "org.mockito" % "mockito-core" % "4.4.0" % "test"
+val AkkaVersion = "2.6.19"
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % AkkaVersion % Test
