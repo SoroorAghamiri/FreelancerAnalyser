@@ -25,6 +25,7 @@ public class UserActor extends AbstractActor {
     private final ActorRef timeActor;
     private Set<String> history;
 
+
     static  public class SearchedTerm{
         public String keyword;
         public SearchedTerm(String keyword){this.keyword = keyword;}

@@ -39,7 +39,6 @@ public class ServiceActor extends AbstractActor {
                             CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config)
                                     .getAPIResult(FreelanceAPI.BASE_URL.getUrl()
                                     + requestMessage.apiEndpoint.getUrl() + requestMessage.query);
-                                    + requestMessage.url.getUrl() + requestMessage.query);
 
                             CompletionStage<Object> result = response.thenApply(res-> res.asJson());
 
@@ -51,14 +50,13 @@ public class ServiceActor extends AbstractActor {
                         {
                             CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config)
                                     .getAPIResult(FreelanceAPI.BASE_URL.getUrl()
-                                            + request.apiEndpoint.getUrl() + request.id);
                                     + FreelanceAPI.SEARCH_TERM.getUrl() + request.id);
 
                             CompletionStage<Object> result = response.thenApply(res-> res.asJson());
 
                             pipe(result, getContext().dispatcher()).to(sender());
-                        }
-                )
+                        })
                 .build();
     }
 }
+

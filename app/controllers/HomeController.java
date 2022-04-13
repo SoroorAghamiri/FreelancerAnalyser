@@ -47,6 +47,7 @@ public class HomeController extends Controller{
     final ActorRef serviceActor;
     final ActorRef skillActor;
     final ActorRef timerActor;
+    final ActorRef OwnerProfileActor;
     @Inject private Materializer materializer;
     @Inject private ActorSystem actorSystem;
 
@@ -56,11 +57,9 @@ public class HomeController extends Controller{
         this.config = config;
         serviceActor = system.actorOf(Props.create(ServiceActor.class,ws, config));
         wordStatsActor = system.actorOf(Props.create(WordStatsActor.class, serviceActor));
-        serviceActor = system.actorOf(actors.ServiceActor.getProps());
-        wordStatsActor = system.actorOf(Props.create(WordStatsActor.class,ws, config, serviceActor));
-        skillActor = system.actorOf(Props.create(SkillActor.class));
         skillActor = system.actorOf(Props.create(SkillActor.class , serviceActor));
         timerActor = system.actorOf(TimerActor.getProps(serviceActor), "timeActor");
+        OwnerProfileActor = system.actorOf(Props.create(OwnerProfileActor.class, serviceActor));
     }
 
     public WebSocket ws() {
@@ -125,12 +124,6 @@ public class HomeController extends Controller{
 //                    skillactor.tell(new SkillActor.RequestSkillProject(received));
 //                    return  ok(views.html.skills.render(skill_name));
 //                });
-        return FutureConverters.toJava(ask(
-                serviceActor , new ServiceActorProtocol.RequestMessage(skill_name , ws , config , FreelanceAPI.SEARCH_TERM
-                ),1000)).thenApply(success->{
-                    ask(skillActor, new ServiceActorProtocol.JsonMessage((JsonNode)success) , 1000);
-                    return ok(views.html.skills.render(result , skill_name))
-                }).thenApply(result->);
 
         //new Skills().parseToSkills(received)
         //return ok(views.html.skills.render(  , skill_name));
@@ -153,8 +146,6 @@ public class HomeController extends Controller{
     {
         return FutureConverters.toJava(ask(wordStatsActor,
                         new ServiceActorProtocol.RequestMessage(query, FreelanceAPI.WORD_STATS), 1000))
-        return FutureConverters.toJava(ask(wordStatsActor, new ServiceActorProtocol.RequestMessage(query, ws, config ,FreelanceAPI.SEARCH_TERM ), 1000))
-                   .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
                    .thenApply(response -> {
                        Map<String, Integer> map = (Map<String, Integer>) response;
                        return ok(views.html.stats.render(map, "Word stats for latest 250 projects for "+query+" term"));
@@ -192,13 +183,13 @@ public class HomeController extends Controller{
      * @author Bariq
      * @return result
      */
-    public Result getOwnerView(String owner_id){
-        return ok(views.html.ownerProfile.render());
-    }
+    //public Result getOwnerView(String owner_id){
+    //    return ok(views.html.ownerProfile.render());
+    //}
 
-//    public CompletionStage<Result> requestApi(String message) {
-//        return FutureConverters.toJava(ask(serviceActor,
-//                        new ServiceActorProtocol.RequestMessage(message, FreelanceAPI.SEARCH_TERM), 1000))
-//                .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
-//    }
+    public CompletionStage<Result> getOwnerView(String owner_id) {
+       return FutureConverters.toJava(ask(serviceActor,
+                        new ServiceActorProtocol.RequestMessage(owner_id, FreelanceAPI.OWNER_PROFILE), 1000))
+                .thenApply(response -> ok(views.html.ownerProfile.render()));
+    }
 }

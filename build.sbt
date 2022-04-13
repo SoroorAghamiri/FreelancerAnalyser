@@ -16,3 +16,6 @@ libraryDependencies += ws
 libraryDependencies += ehcache
 libraryDependencies += "org.mockito" % "mockito-core" % "2.10.0" % "test"
 
+libraryDependencies += "org.hamcrest" % "hamcrest-all" % "1.3" % Test
+
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % "2.6.19" % Test
