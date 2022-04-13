@@ -71,6 +71,7 @@ public class HomeController extends Controller{
 	 *         send to the client
 	 */
     public Result index(Http.Request request){
+        timerActor.tell(new TimerActor.NewSearch(null) , timerActor);
         return ok(views.html.index.render(request));
     }
 
