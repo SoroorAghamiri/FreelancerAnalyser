@@ -1,5 +1,4 @@
 @(request: play.mvc.Http.Request)
-<!DOCTYPE html>
 
 @main("Welcome to Play") {
 
@@ -31,7 +30,7 @@
     <div class="col-2"></div>
 
     <div class="col-8" id="result">
-		<ol></ol>
+		
     </div>
     <div class="col-2"></div>
 
@@ -43,11 +42,14 @@ var statsId = 0;
 $("#stats").addClass("disableStats");
 
 var projectArray = [];
+var lastSearch = "";
 
 $("#go-button").click(function() {
     $.get("/get-search-term/" + $("#search").val(), function(data, status) {
-
+		lastSearch = $("#search").val().replace(/\s/g, '-');;
 		projectArray = [];
+		
+		$("#result").prepend('<div id="'+lastSearch+'"></div>');
         for (let i = 0; i < data['result']['projects'].length; i++) {
 			projectArray.push(data['result']['projects'][i]);
             var projectTitle = ', <a target="_blank" href="https://www.freelancer.com/projects/' + data['result']['projects'][i]['seo_url'] + '">' + data['result']['projects'][i]['title'] + '</a>';
@@ -64,15 +66,15 @@ $("#go-button").click(function() {
             }
             var refined = allSkills.join(' ');
 
-
-            $("#result > ol").prepend('<li> <a href="/owner-profile/' + ownerProfileId + '">' + ownerProfileId + '</a> ' + submitDate +
+					
+            $("#result > #"+lastSearch).prepend('<li>'+(data['result']['projects'].length-i)+'. <a href="/owner-profile/' + ownerProfileId + '">' + ownerProfileId + '</a> ' + submitDate +
                 projectTitle + ', Type: ' + type + ', <b>[</b>Skills: ' + refined + '<b>]</b>.</a> <a href ="/stats/single/' + projectId + '">Stats.</a> <a target="_blank" href="/readablity/' + projectId + '">Readability</a> </li>')
         }
 
-        $("#result").prepend(' <span>FKGL: ' + data['score']['avgFKGL'] + '</span> <br><a href =query id="statsLink">Global Stats</a>');
-        $("#result").prepend(' : <span>Flesh Reading Ease Index: ' + data['score']['avgFREI'] + '</span>');
-        $("#result").prepend('<label class="fw-bold">Search terms: ' + $("#search").val() + "</label>");
-        $("#result").prepend('<div class="mt-5"></div>');
+        $("#result > #"+lastSearch).prepend(' <span>FKGL: ' + data['score']['avgFKGL'] + '</span> <br><a href =query id="statsLink">Global Stats</a>');
+        $("#result > #"+lastSearch).prepend(' : <span>Flesh Reading Ease Index: ' + data['score']['avgFREI'] + '</span>');
+        $("#result > #"+lastSearch).prepend('<label class="fw-bold">Search terms: ' + $("#search").val() + "</label>");
+        $("#result > #"+lastSearch).prepend('<br>');
 
         //Word stats parsing
 
@@ -125,7 +127,7 @@ $("#go-button").click(function() {
 
 		if(!projectArray.some(i => i.id === projectId)){
 			projectArray.push(data['result']['projects'][0]);
-        	$("#result > ol").append('<li> <a href="/owner-profile/' + ownerProfileId + '">' + ownerProfileId + '</a> ' + submitDate +
+        	$("#result > #"+lastSearch).append('<li> '+(projectArray.length)+' <a href="/owner-profile/' + ownerProfileId + '">' + ownerProfileId + '</a> ' + submitDate +
             projectTitle + ', Type: ' + type + ', <b>[</b>Skills: ' + refined + '<b>]</b>.</a> <a href ="/stats/single/' + projectId + '">Stats.</a> <a target="_blank" href="/readablity/' + projectId + '">Readability</a> </li>')
         }
         
