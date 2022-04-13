@@ -40,4 +40,36 @@ public class ServiceActorProtocol {
 
         }
     }
+    
+    /**
+     * Readability request actor class 
+     * @author Kazi Asif Tanim
+     * @params string query
+     * @param FreelanceAPI freelanceApi
+     */
+    public static class ReadabilityRequest{
+    	public final String query;
+    	public final FreelanceAPI freelanceApi;
+    	
+    	public ReadabilityRequest(String query, FreelanceAPI freelanceApi) {
+    		this.query = query;
+    		this.freelanceApi = freelanceApi;
+    	}
+    }
+    
+    /**
+     * Single Readability request actor class 
+     * @author Kazi Asif Tanim
+     * @params string id
+     * @param FreelanceAPI freelanceApi
+     */
+    public static class SingleReadabilityRequest{
+    	public final String id;
+    	public final FreelanceAPI freelanceApi;
+    	
+    	public SingleReadabilityRequest(String id, FreelanceAPI freelanceApi) {
+    		this.id = id;
+    		this.freelanceApi = freelanceApi;
+    	}
+    }
 }
