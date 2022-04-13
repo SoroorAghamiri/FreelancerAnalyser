@@ -18,7 +18,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import play.core.NamedThreadFactory;
 import play.libs.streams.ActorFlow;
 import play.mvc.*;
-import play.mvc.Http.Request.*;
 import scala.compat.java8.FutureConverters;
 import service.FreelancerAPIService;
 import play.libs.ws.*;
@@ -50,6 +49,7 @@ public class HomeController extends Controller{
     private final Config config;
     final ActorRef serviceActor;
     final ActorRef skillActor;
+    final ActorRef ownerProfileActor;
     final ActorRef timerActor;
     @Inject private Materializer materializer;
     @Inject private ActorSystem actorSystem;
@@ -64,6 +64,7 @@ public class HomeController extends Controller{
         serviceActor = system.actorOf(Props.create(ServiceActor.class, ws, config));
         wordStatsActor = system.actorOf(Props.create(WordStatsActor.class, serviceActor));
         skillActor = system.actorOf(Props.create(SkillActor.class , serviceActor));
+        ownerProfileActor = system.actorOf(Props.create(OwnerProfileActor.class, serviceActor));
         timerActor = system.actorOf(TimerActor.getProps(serviceActor), "timeActor");
         readabilityActor = system.actorOf(Props.create(ReadabilityActor.class, serviceActor));
     }
@@ -73,10 +74,9 @@ public class HomeController extends Controller{
     }
 
     /**
-	 * Action method calls the view template index and render the home page
-	 * @author Kazi Asif Tanim
-	 * @return returns a play.mvc.Result value, representing the HTTP response to
-	 *         send to the client
+	 * Sends a null message to time actor to reset the page, and opens home page
+	 * @author Soroor
+	 * @return renders home page
 	 */
     public Result index(Http.Request request){
         timerActor.tell(new TimerActor.NewSearch(null) , timerActor);
@@ -151,7 +151,7 @@ public class HomeController extends Controller{
     }
 
     /**
-     * Gets the 10 latest projects related to a skill
+     * Gets the 10 latest projects related to a skill, calls skill actor to get the 10 latest projects
      * @author Soroor
      * @param skill_name the skill selected in the main page
      * @return skill view, displaying 10 latest projects
@@ -171,20 +171,6 @@ public class HomeController extends Controller{
      * @param query Search term query
      * @return CompletionStage Result value of the latest 250 project with query term
      */
-//    public CompletionStage<Result> getWordStats(String query)
-//    {
-//         CompletionStage<WSResponse> response = new FreelancerAPIService(ws, config).
-//                getAPIResult(FreelanceAPI.BASE_URL.getUrl() + FreelanceAPI.WORD_STATS.getUrl() + query);
-//
-//         CompletionStage<Result> result = response.thenApply(res ->{
-//             JsonNode node = res.asJson();
-//             return ok(views.html.stats.render(WordStat.processAllProjectsStats(node),
-//                     "Word stats for latest 250 projects for "+query+" term"));
-//         });
-//
-//         return result;
-//    }
-
     public CompletionStage<Result> getWordStats(String query)
     {
         return FutureConverters.toJava(ask(wordStatsActor,
@@ -226,13 +212,9 @@ public class HomeController extends Controller{
      * @author Bariq
      * @return result
      */
-    public Result getOwnerView(String owner_id){
-        return ok(views.html.ownerProfile.render());
+    public CompletionStage<Result> getOwnerView(String owner_id) {
+        return FutureConverters.toJava(ask(serviceActor,
+                        new ServiceActorProtocol.RequestMessage(owner_id, FreelanceAPI.OWNER_PROFILE), 1000))
+                .thenApply(response -> ok(views.html.ownerProfile.render()));
     }
-
-//    public CompletionStage<Result> requestApi(String message) {
-//        return FutureConverters.toJava(ask(serviceActor,
-//                        new ServiceActorProtocol.RequestMessage(message, FreelanceAPI.SEARCH_TERM), 1000))
-//                .thenApply(response -> ok(Readability.processReadability((JsonNode) response)));
-//    }
 }
