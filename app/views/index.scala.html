@@ -1,15 +1,26 @@
-@()
+@(request: play.mvc.Http.Request)
+<!DOCTYPE html>
 
 @main("Welcome to Play") {
-  <div class="text-center mt-3">
-    <h3>Welcome to Freelancer Analyser!</h3>
-  </div>
-  
+
+<html>
+<head>
+  <script type='text/javascript' src='https://code.jquery.com/jquery-3.3.1.min.js'></script>;
+  <script type='text/javascript' src='@routes.Assets.at("javascript/index.js")'></script>
+</head>
+
+<body data-ws-url="@routes.HomeController.ws.webSocketURL(request)">
+<div class="text-center mt-3">
+  <h3>Welcome to Freelancer Analyser!</h3>
+</div>
+<div id="time"> </div>
+</body>
+</html>
   <div class="row mt-5">
     <div class="col-4"></div>
     <div class="col-4">
       <div class="form-group has-search">
-        
+
         <input id="search" type="text" class="form-control" placeholder="Enter search terms">
 
       </div>
@@ -24,11 +35,12 @@
 
   <div class="row">
     <div class="col-2"></div>
+
     <div class="col-8" id="result">
 
     </div>
     <div class="col-2"></div>
-    
+
   </div>
 }
 
@@ -84,6 +96,21 @@ $("#go-button").click(function() {
 
 });
 </script>
+<script>
+    (function() {
+  $(function() {
+    var ws;
+    ws = new WebSocket($("body").data("ws-url"));
+    return ws.onmessage = function(event) {
+      var message;
+      message = JSON.parse(event.data);
+      return $('#time').append(message.time + "<br/>");
+    };
+  });
+
+}).call(this);
+</script>
+
 <style>
   .disableStats {
     pointer-events: none;
