@@ -25,6 +25,12 @@ import java.util.stream.Stream;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * <code>
+ *     Actor for Employer Profile
+ * </code>
+ */
+
 public class OwnerProfileActor extends AbstractActor {
     private ActorRef serviceActor;
 

@@ -2,6 +2,7 @@ package controllers;
 
 import Helpers.FreelanceAPI;
 import Helpers.Readability;
+import Helpers.Skills;
 import actors.*;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -168,9 +169,6 @@ public class HomeController extends Controller{
      * @author Bariq
      * @return result
      */
-    //public Result getOwnerView(String owner_id){
-      //  return ok(views.html.ownerProfile.render());
-    //}
     public CompletionStage<Result> getOwnerView(String owner_id) {
         return FutureConverters.toJava(ask(serviceActor,
                         new ServiceActorProtocol.RequestMessage(owner_id, FreelanceAPI.OWNER_PROFILE), 1000))
