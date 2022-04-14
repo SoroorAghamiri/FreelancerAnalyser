@@ -2,6 +2,7 @@ package actors;
 
 import Helpers.FreelanceAPI;
 import akka.actor.AbstractActor;
+import akka.actor.ActorRef;
 import akka.actor.Props;
 
 import com.typesafe.config.Config;
@@ -17,12 +18,17 @@ public class ServiceActor extends AbstractActor {
 
     private WSClient ws;
     private Config config;
+    int state = 0;
 
     public ServiceActor(WSClient ws, Config config)
     {
         this.ws = ws;
         this.config = config;
     }
+    public ServiceActor(){
+        super();
+    }
+
     public static Props getProps() {
         return Props.create(ServiceActor.class);
     }
@@ -30,6 +36,13 @@ public class ServiceActor extends AbstractActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder()
+                .match(
+                        Exception.class,
+                        exception -> {
+                            throw exception;
+                        })
+                .match(Integer.class, i -> state = i)
+                .matchEquals("get", s -> getSender().tell(state, getSelf()))
                 .match(
                         ServiceActorProtocol.RequestMessage.class,
                         requestMessage -> {
