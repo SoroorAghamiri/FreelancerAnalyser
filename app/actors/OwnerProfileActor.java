@@ -11,6 +11,7 @@ import scala.jdk.javaapi.FutureConverters;
 import play.libs.ws.WSClient;
 import Helpers.Utils;
 import com.typesafe.config.Config;
+import akka.actor.Props;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +38,9 @@ public class OwnerProfileActor extends AbstractActor {
     public OwnerProfileActor(ActorRef serviceActor) {
         this.serviceActor = serviceActor;
     }
-
+    public static Props getProps(ActorRef serviceActor) {
+        return Props.create(OwnerProfileActor.class , serviceActor);
+    }
     @Override
     public Receive createReceive() {
         return receiveBuilder()

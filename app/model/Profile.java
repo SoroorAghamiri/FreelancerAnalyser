@@ -14,7 +14,7 @@ import java.util.*;
 public class Profile {
     /**
      *
-     * intialization of the variables for the model
+     * initialization of the variables for the model
      *
      */
     String name;
