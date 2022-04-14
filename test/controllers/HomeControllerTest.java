@@ -1,5 +1,6 @@
 package controllers;
 
+import akka.actor.ActorRef;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
