@@ -1,8 +1,10 @@
 package actors;
 
 import Helpers.Utils;
+import Helpers.WordStat;
 import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
+import akka.actor.Props;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.typesafe.config.Config;
 import model.AllProjects;
@@ -21,15 +23,44 @@ import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Word stat actor
+ * @author Haitham Abdel-Salam
+ */
 public class WordStatsActor extends AbstractActor {
 
+    /**
+     * reference to service actor
+     */
     private ActorRef serviceActor;
 
+    /**
+     * Word stat actor constructor
+     * @author Haitham Abdel-Salam
+     * @param serviceActor actor ref to service Actor
+     */
     public WordStatsActor(ActorRef serviceActor)
     {
         this.serviceActor = serviceActor;
     }
 
+    /**
+     * Gets WordStats Actor Props
+     * @author Haitham Abdel-Salam
+     * @param serviceActor actor ref to service Actor
+     */
+    public static Props getProps(ActorRef serviceActor) {
+        return Props.create(WordStatsActor.class , serviceActor);
+    }
+
+
+    /**
+     * Handling reception of two messages from a regular request and a single project reques with Id
+     * After to recives a msg it sends a msg to service actor and waits for respond then uses piping
+     * returns hashmap of the processed single and all projects for the hashmap
+     * @author Haitham Abdel-Salam
+     * @return a receiver that would respond with onRequest
+     */
     public Receive createReceive() {
         return receiveBuilder()
                 .match(
@@ -38,7 +69,7 @@ public class WordStatsActor extends AbstractActor {
                             CompletionStage<Object> fut =
                                     FutureConverters.toJava(ask(serviceActor, msg, 1000))
                                             .thenApply(result ->{
-                                        return processAllProjectsStats((JsonNode) result);
+                                        return WordStat.processAllProjectsStats((JsonNode) result);
                                     });
 
                             pipe(fut, getContext().dispatcher()).to(sender());
@@ -49,61 +80,11 @@ public class WordStatsActor extends AbstractActor {
                             CompletionStage<Object> fut =
                                     FutureConverters.toJava(ask(serviceActor, msg, 1000))
                                             .thenApply(result ->{
-                                                return processProjectStats((JsonNode) result);
+                                                return WordStat.processProjectStats((JsonNode) result);
                                             });
 
                             pipe(fut, getContext().dispatcher()).to(sender());
                         })
                 .build();
-    }
-
-
-    /**
-     * Processes projects returned in JSON format and produces the words statistics for all projects
-     * @author Haitham Abdel-Salam
-     * @param jsonNode json data to be processed
-     * @return  map with Unique word as a key and frequency as a value.
-     */
-    public  Map<String, Integer> processAllProjectsStats(JsonNode jsonNode) {
-
-        AllProjects projects = Utils.convertNodeToAllProjects(jsonNode);
-        List<String> combinedStream = Stream.of(projects.getTitles(), projects.getDescriptions())
-                .flatMap(Collection::stream).collect(toList());
-        return processWords(combinedStream);
-    }
-
-    /**
-     * Processes word statistics for a single project
-     * @author Haitham Abdel-Salam
-     * @param jsonNode json data to be processed
-     * @return map with Unique word as a key and frequency as a value.
-     */
-    public  Map<String, Integer> processProjectStats(JsonNode jsonNode) {
-
-        Project project = Utils.convertNodeToProject(jsonNode);
-        List<String> combinedStream = Stream.of(project.getTitle(), project.getDescription()).collect(toList());
-        return processWords(combinedStream);
-    }
-
-    /**
-     * Processes a collection of strings and gets unique words and its frequencies
-     * @author Haitham Abdel-Salam
-     * @param combinedStream List of all strings to be processed
-     * @return map with Unique word as a key and frequency as a value.
-     */
-    public  Map<String, Integer> processWords(List<String> combinedStream)
-    {
-        List<String> separatedWords = combinedStream.stream().map(w -> w
-                        .replaceAll("[^A-Za-z0-9 ]", "").split(" "))
-                .flatMap(Arrays::stream)
-                .collect(Collectors.toList());
-
-        HashMap<String, Integer> uniqueWordsFrequency = separatedWords.stream()
-                .map(String::toLowerCase)
-                .collect(Collectors.groupingBy(word -> word, Collectors.collectingAndThen(counting(), Long::intValue)))
-                .entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                .collect(Collectors.toMap(e->e.getKey(), v -> v.getValue(), (e1, e2) -> e1, LinkedHashMap::new));
-
-        return uniqueWordsFrequency;
     }
 }

@@ -14,17 +14,37 @@ import static akka.pattern.Patterns.pipe;
 
 import java.util.concurrent.CompletionStage;
 
+/**
+ * Service Actor class that handles Api calls
+ * @author Haitham Abdel-Salam
+ */
 public class ServiceActor extends AbstractActor {
 
+    /**
+     * WSClient
+     */
     private WSClient ws;
+    /**
+     * Config
+     */
     private Config config;
     int state = 0;
 
+    /**
+     * Service Actor Constructor
+     * @param ws WSClient
+     * @param config Config
+     */
     public ServiceActor(WSClient ws, Config config)
     {
         this.ws = ws;
         this.config = config;
     }
+
+    /**
+     * Creating a new service actor
+     * @return
+     */
     public ServiceActor(){
         super();
     }
@@ -33,6 +53,12 @@ public class ServiceActor extends AbstractActor {
         return Props.create(ServiceActor.class);
     }
 
+    /**
+     * Receives a Request msg with the query and API endpoint and if the message if matched it returns a JSON
+     * as a result of a completion Stage
+     * Receives a message from a single project request with endpoint and project ID
+     * @return Receive
+     */
     @Override
     public Receive createReceive() {
         return receiveBuilder()
