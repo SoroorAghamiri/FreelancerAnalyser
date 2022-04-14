@@ -46,6 +46,8 @@ public class SupervisorActorTest {
         ActorRef child =
                 (ActorRef) Await.result(ask(supervisor, Props.create(ServiceActor.class), 5000), timeout);
 
+        child.tell(42, ActorRef.noSender());
+        assertEquals(42, Await.result(ask(child, "get", 5000), timeout));
         child.tell(new Exception(), ActorRef.noSender());
         assertEquals(0, Await.result(ask(child, "get", 5000), timeout));
     }
