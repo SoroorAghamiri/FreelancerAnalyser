@@ -74,8 +74,6 @@ public class SkillActor extends AbstractActor {
         if(allproject != null){
             foundprojectstring = allproject.stream().map(p->p.getOwnerId().concat(p.getTitle().concat(p.getType().concat(p.getAllJobs())))).collect(Collectors.toList());
             return foundprojectstring;
-        }else{
-            foundprojectstring = Collections.singletonList("No Results Found.");
         }
         return foundprojectstring;
     }
@@ -107,7 +105,6 @@ public class SkillActor extends AbstractActor {
             }
             return allproject;
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
         }
         return null;
     }
