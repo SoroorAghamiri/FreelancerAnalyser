@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import akka.actor.Props;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -35,6 +36,10 @@ public class ReadabilityActor extends AbstractActor{
 	public ReadabilityActor(ActorRef serviceActor) {
 		this.serviceActor = serviceActor;
 	}
+
+    public static Props getProps(ActorRef serviceActor) {
+        return Props.create(ReadabilityActor.class , serviceActor);
+    }
 	
 	/**
 	 * @author Kazi Asif Tanim
