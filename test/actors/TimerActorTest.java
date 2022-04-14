@@ -57,6 +57,5 @@ public class TimerActorTest {
         timerActor.tell(new TimerActor.NewSearch("test") , ActorRef.noSender());
         ServiceActorProtocol.RequestMessage expected = testProbe.expectMsgClass(ServiceActorProtocol.RequestMessage.class);
         Assert.assertNotNull(expected);
-
     }
 }

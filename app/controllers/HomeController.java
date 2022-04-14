@@ -47,16 +47,23 @@ public class HomeController extends Controller{
 
     private final WSClient ws;
     private final Config config;
+
+    @Inject private Materializer materializer;
+    @Inject private ActorSystem actorSystem;
+
     final ActorRef serviceActor;
     final ActorRef skillActor;
     final ActorRef ownerProfileActor;
     final ActorRef timerActor;
-    @Inject private Materializer materializer;
-    @Inject private ActorSystem actorSystem;
-
     final ActorRef wordStatsActor;
     final ActorRef readabilityActor;
-    
+
+    /**
+     * Home controller constructor with main actors
+     * @param ws WSClinet
+     * @param config Config
+     * @param system System
+     */
     @Inject
     public HomeController(WSClient ws, Config config, ActorSystem system) {
         this.ws = ws;
@@ -69,6 +76,10 @@ public class HomeController extends Controller{
         readabilityActor = system.actorOf(Props.create(ReadabilityActor.class, serviceActor));
     }
 
+    /**
+     * Route in the controller returns a WebSocket to the client
+     * @return WebScoket
+     */
     public WebSocket ws() {
         return WebSocket.Json.accept(request -> ActorFlow.actorRef(out->UserActor.props(out, timerActor), actorSystem, materializer));
     }
@@ -167,6 +178,7 @@ public class HomeController extends Controller{
 
     /**
      * Action method calls the stat view and renders the stats page with a global result for latest 250 projects
+     * By using the Word Stats Actor
      * @author Haitham Abdel-Salam
      * @param query Search term query
      * @return CompletionStage Result value of the latest 250 project with query term
@@ -183,6 +195,7 @@ public class HomeController extends Controller{
 
     /**
      * Action method calls the stat view and renders the stats page with a single project stats result
+     * By using Word Stats Actor
      * @author Haitham Abdel-Salam
      * @param id project id
      * @return CompletionStage Result value of a single project
