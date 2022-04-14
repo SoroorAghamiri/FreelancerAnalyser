@@ -27,4 +27,5 @@ class SupervisorActor extends AbstractActor {
 							getSender().tell(getContext().actorOf(props), getSelf());
 						})
 				.build(); 
-		} }
+		} 
+}
