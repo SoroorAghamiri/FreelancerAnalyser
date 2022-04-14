@@ -41,5 +41,9 @@ public class ProfileTest {
         assertEquals("country",profile.getCountry());
         assertEquals("developer",profile.getRole());
         assertEquals(true,profile.isVerified());
+        assertEquals("CAD $" , profile.getPaymentMethod());
+        assertEquals(1, profile.getJobcount());
+        assertEquals(0, profile.getRecommendedby());
+        assertEquals(10929229, profile.getRegistration_date());
     }
 }
